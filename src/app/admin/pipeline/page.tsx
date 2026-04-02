@@ -305,6 +305,59 @@ export default function PipelineDashboard() {
                       </>
                     )}
 
+                    {/* Images found for this fund */}
+                    {run.content_output.imageUrls?.length > 0 && (
+                      <>
+                        <p className="text-[11px] font-bold tracking-[0.08em] uppercase mb-3" style={{ color: "var(--text-muted)" }}>
+                          Fund Images ({run.content_output.imageUrls.length} found) — Click to select hero image
+                        </p>
+                        <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6">
+                          {run.content_output.imageUrls.slice(0, 10).map((url: string, i: number) => (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                // Update selectedImageUrl in content_output
+                                const updated = { ...run.content_output, selectedImageUrl: url };
+                                fetch("/api/newsletter/approve", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ pipelineRunId: run.id, action: "update_image", notes: url }),
+                                });
+                                run.content_output.selectedImageUrl = url;
+                                setRuns([...runs]);
+                              }}
+                              className="aspect-[16/10] rounded-[6px] overflow-hidden relative transition-all"
+                              style={{
+                                border: run.content_output.selectedImageUrl === url ? "3px solid var(--green-deep)" : "2px solid var(--border)",
+                              }}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={url} alt={`Option ${i + 1}`} className="w-full h-full object-cover" />
+                              {run.content_output.selectedImageUrl === url && (
+                                <div className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "var(--green-deep)" }}>
+                                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                        {/* Selected image preview */}
+                        {run.content_output.selectedImageUrl && (
+                          <div className="mb-6">
+                            <p className="text-[11px] font-bold tracking-[0.08em] uppercase mb-2" style={{ color: "var(--green)" }}>Selected Hero Image</p>
+                            <div className="aspect-[3/1] rounded-[8px] overflow-hidden relative max-w-[600px]">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={run.content_output.selectedImageUrl} alt="Selected hero" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)" }} />
+                              <div className="absolute bottom-3 left-4">
+                                <span className="text-[14px] font-bold" style={{ color: "#fff" }}>{run.content_output.subject}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+
                     {/* Rendered body */}
                     {(run.content_output.bodyHtml || run.content_output.body_html) && (
                       <>

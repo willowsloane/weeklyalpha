@@ -85,5 +85,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: "changes_requested" });
   }
 
+  if (action === "update_image") {
+    // Update the selected image URL in content_output
+    const { data: run } = await supabase
+      .from("newsletter_pipeline_runs")
+      .select("content_output")
+      .eq("id", pipelineRunId)
+      .single();
+
+    const updatedContent = { ...(run?.content_output || {}), selectedImageUrl: notes };
+    await supabase
+      .from("newsletter_pipeline_runs")
+      .update({ content_output: updatedContent, updated_at: new Date().toISOString() })
+      .eq("id", pipelineRunId);
+
+    return NextResponse.json({ status: "image_updated" });
+  }
+
   return NextResponse.json({ error: "Invalid action" }, { status: 400 });
 }

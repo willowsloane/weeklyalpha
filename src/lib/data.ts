@@ -125,7 +125,7 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         gradient: style.gradient,
         tagColor: style.tagColor,
         strategyLabel: formatStrategy(fund.strategy),
-        imageUrl: getImageForFund(fund.strategy, fund.fund_name || ""),
+        imageUrl: content.selectedImageUrl || content.imageUrls?.[0] || getImageForFund(fund.strategy, fund.fund_name || ""),
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
