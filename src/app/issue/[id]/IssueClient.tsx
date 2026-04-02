@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FundHeroImage } from "../../components/FundHeroImage";
+import Image from "next/image";
 import { FadeUp } from "../../components/Animations";
 import type { FeaturedIssue } from "@/lib/data";
 
@@ -49,15 +49,24 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
       {/* Hero */}
       <div className="max-w-[860px] mx-auto px-6 pt-8">
         <FadeUp>
-          <FundHeroImage
-            strategy={issue.strategyLabel}
-            fundName={issue.fundName}
-            gradient={issue.gradient}
-            irrNet={issue.irrNet}
-            tvpi={issue.tvpi}
-            vintageYear={issue.vintageYear}
-            fundSize={issue.fundSize}
-          />
+          <div className="relative aspect-[3/1] md:aspect-[2.5/1] rounded-[12px] overflow-hidden">
+            <Image src={issue.imageUrl} alt={issue.fundName} fill className="object-cover" sizes="860px" priority />
+            <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.05) 100%)" }} />
+            {issue.irrNet && (
+              <div className="absolute top-6 right-6 text-right">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>Net IRR</p>
+                <p className="text-[36px] font-bold tracking-[-0.03em] leading-none" style={{ color: "rgba(255,255,255,0.95)", fontFamily: MONO }}>{issue.irrNet}</p>
+              </div>
+            )}
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="text-[10px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(12px)" }}>{issue.strategyLabel}</span>
+                {issue.vintageYear && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{issue.vintageYear} Vintage</span>}
+                {issue.fundSize && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{issue.fundSize}</span>}
+              </div>
+              <h2 className="text-[28px] md:text-[36px] font-bold tracking-[-0.02em] leading-[1.1]" style={{ fontFamily: SERIF, color: "#fff" }}>{issue.fundName}</h2>
+            </div>
+          </div>
         </FadeUp>
       </div>
 

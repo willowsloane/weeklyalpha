@@ -27,6 +27,7 @@ const PLACEHOLDER_FEATURED: FeaturedIssue = {
   gradient: "linear-gradient(135deg, #064E37 0%, #0A7B55 40%, #21759B 100%)",
   tagColor: "#059669",
   strategyLabel: "Venture Capital",
+  imageUrl: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=600&fit=crop&q=80",
 };
 
 const PLACEHOLDER_PAST: FeaturedIssue[] = [
@@ -36,6 +37,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     subject: "Summit Partners Growth Equity VI", previewText: "Growth equity vehicle targeting $2B+ with a focus on technology-enabled services.",
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #1E3A5F 0%, #2563EB 60%, #60A5FA 100%)", tagColor: "#2563EB", strategyLabel: "Growth Equity",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop&q=80",
   },
   {
     id: "p2", pipelineRunId: "p2", weekOf: "2026-03-17", fundName: "Foundry Group Next Fund II", gpName: "Foundry Group",
@@ -43,6 +45,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     subject: "Foundry Group Next Fund II", previewText: "Boulder-based early-stage firm known for thesis-driven investing in infrastructure software.",
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #064E37 0%, #059669 60%, #34D399 100%)", tagColor: "#059669", strategyLabel: "Venture Capital",
+    imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=600&fit=crop&q=80",
   },
   {
     id: "p3", pipelineRunId: "p3", weekOf: "2026-03-10", fundName: "Starwood Opportunity Fund XII", gpName: "Starwood Capital",
@@ -50,6 +53,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     subject: "Starwood Opportunity Fund XII", previewText: "Opportunistic real estate fund focused on distressed assets and value-add properties.",
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #92400E 0%, #D97706 60%, #FCD34D 100%)", tagColor: "#D97706", strategyLabel: "Real Estate",
+    imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop&q=80",
   },
 ];
 

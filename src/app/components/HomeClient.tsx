@@ -1,9 +1,9 @@
 "use client";
 
 import { FadeUp, StaggerCards, StaggerChild, BackgroundLines, BarAnimation } from "./Animations";
-import { FundHeroImage } from "./FundHeroImage";
 import type { FeaturedIssue } from "@/lib/data";
 import Link from "next/link";
+import Image from "next/image";
 
 const SERIF = "var(--font-playfair), Georgia, serif";
 const MONO = "var(--font-mono), monospace";
@@ -76,7 +76,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
                 </button>
               </div>
               <p className="text-[12px] mb-14" style={{ color: "var(--text-muted)" }}>
-                Join 2,400+ fund professionals &middot; Free forever
+                Over 30,000 fund documents analysed &middot; Free forever
               </p>
             </FadeUp>
           </div>
@@ -89,15 +89,25 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
           <FadeUp delay={0.1}>
             <Link href={featured.pipelineRunId !== "placeholder" ? `/issue/${featured.pipelineRunId}` : "#preview"}>
               <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center group cursor-pointer">
-                <FundHeroImage
-                  strategy={featured.strategyLabel}
-                  fundName={featured.fundName}
-                  gradient={featured.gradient}
-                  irrNet={featured.irrNet}
-                  tvpi={featured.tvpi}
-                  vintageYear={featured.vintageYear}
-                  fundSize={featured.fundSize}
-                />
+                <div className="aspect-[4/3] rounded-[10px] overflow-hidden relative">
+                  <Image src={featured.imageUrl} alt={featured.fundName} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%)" }} />
+                  {featured.irrNet && (
+                    <div className="absolute top-5 right-5">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>Net IRR</p>
+                      <p className="text-[32px] font-bold tracking-[-0.03em] leading-none" style={{ color: "#fff", fontFamily: MONO }}>{featured.irrNet}</p>
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 p-7">
+                    {isLive && <span className="text-[10px] font-bold tracking-[0.12em] uppercase mb-2 inline-flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.6)" }}><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />Live from pipeline</span>}
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-[10px] font-bold tracking-[0.1em] uppercase px-2 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(12px)" }}>{featured.strategyLabel}</span>
+                      {featured.vintageYear && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{featured.vintageYear} vintage</span>}
+                      {featured.fundSize && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{featured.fundSize}</span>}
+                    </div>
+                    <h2 className="text-[26px] md:text-[32px] font-bold tracking-[-0.02em] leading-[1.1]" style={{ fontFamily: SERIF, color: "#fff" }}>{featured.fundName}</h2>
+                  </div>
+                </div>
 
                 <div>
                   <span className="inline-block text-[11px] font-bold tracking-[0.15em] uppercase mb-5 pb-2" style={{ color: "var(--green)", borderBottom: "2px solid var(--green)" }}>Featured Analysis</span>
@@ -153,16 +163,17 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
               <StaggerChild key={issue.id}>
                 <Link href={issue.pipelineRunId.startsWith("p") ? "#" : `/issue/${issue.pipelineRunId}`}>
                   <article className="group cursor-pointer">
-                    <div className="mb-5 transition-transform group-hover:scale-[1.005]">
-                      <FundHeroImage
-                        strategy={issue.strategyLabel}
-                        fundName={issue.fundName}
-                        gradient={issue.gradient}
-                        irrNet={issue.irrNet}
-                        tvpi={issue.tvpi}
-                        vintageYear={issue.vintageYear}
-                        fundSize={issue.fundSize}
-                      />
+                    <div className="aspect-[16/10] rounded-[8px] overflow-hidden mb-5 relative transition-transform group-hover:scale-[1.005]">
+                      <Image src={issue.imageUrl} alt={issue.fundName} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" />
+                      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)" }} />
+                      <div className="absolute bottom-3 left-3">
+                        <span className="text-[10px] font-bold tracking-[0.08em] uppercase px-2 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(8px)" }}>{issue.strategyLabel}</span>
+                      </div>
+                      {issue.irrNet && (
+                        <div className="absolute top-3 right-3">
+                          <span className="text-[18px] font-bold" style={{ color: "#fff", fontFamily: MONO }}>{issue.irrNet}</span>
+                        </div>
+                      )}
                     </div>
                     <h3 className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:underline" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
                       {issue.fundName}
@@ -280,7 +291,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
             </FadeUp>
             <StaggerCards className="space-y-5">
               {[
-                { metric: "2,400+", label: "LP subscribers" },
+                { metric: "30,000+", label: "Fund documents analysed" },
                 { metric: "52%", label: "Average open rate" },
                 { metric: "100%", label: "Institutional audience" },
               ].map((stat) => (
@@ -307,7 +318,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
           </FadeUp>
           <FadeUp delay={0.1}>
             <p className="text-[17px] mb-10 max-w-[440px] mx-auto leading-[1.6]" style={{ color: "var(--text-secondary)" }}>
-              Join 2,400+ fund professionals who start every week with institutional-grade private fund analysis.
+              Built on analysis of over 30,000 private fund documents — institutional-grade intelligence, delivered weekly.
             </p>
           </FadeUp>
           <FadeUp delay={0.2}>

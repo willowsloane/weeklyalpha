@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase";
+import { getImageForFund } from "./images";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -68,6 +69,7 @@ export interface FeaturedIssue {
   gradient: string;
   tagColor: string;
   strategyLabel: string;
+  imageUrl: string;
 }
 
 export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
@@ -123,6 +125,7 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         gradient: style.gradient,
         tagColor: style.tagColor,
         strategyLabel: formatStrategy(fund.strategy),
+        imageUrl: getImageForFund(fund.strategy, fund.fund_name || ""),
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
