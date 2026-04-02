@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import AlphaToolkit from "./components/AlphaToolkit";
 
 const dmSans = DM_Sans({
   variable: "--font-inter",
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="en" className={`${dmSans.variable} ${playfair.variable} ${ibmMono.variable} h-full`}>
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-inter), system-ui, -apple-system, sans-serif" }}>
         {children}
+        <AlphaToolkit />
       </body>
     </html>
   );
