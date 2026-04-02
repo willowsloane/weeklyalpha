@@ -107,25 +107,41 @@ export default function AlphaToolkit() {
     // Hide overlay before capture
     setMode("idle");
 
-    // Small delay to let overlay unmount
-    await new Promise((r) => setTimeout(r, 80));
+    // Wait for overlay to fully unmount from DOM
+    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
       const html2canvas = (await import("html2canvas-pro")).default;
-      const canvas = await html2canvas(document.body, {
-        x: x + window.scrollX,
-        y: y + window.scrollY,
-        width: w,
-        height: h,
+
+      // Capture the full page, then crop to selection
+      const fullCanvas = await html2canvas(document.documentElement, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
       });
 
-      const dataUrl = canvas.toDataURL("image/png");
+      // Crop to selection area (account for scroll + device pixel ratio)
+      const scale = 2;
+      const cropX = (x + window.scrollX) * scale;
+      const cropY = (y + window.scrollY) * scale;
+      const cropW = w * scale;
+      const cropH = h * scale;
+
+      const cropCanvas = document.createElement("canvas");
+      cropCanvas.width = cropW;
+      cropCanvas.height = cropH;
+      const ctx = cropCanvas.getContext("2d")!;
+      ctx.drawImage(fullCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+      const dataUrl = cropCanvas.toDataURL("image/png");
       setScreenshot(dataUrl);
       setMode("chatting");
-    } catch {
+    } catch (err) {
+      console.error("Capture failed:", err);
       setMode("chatting");
     }
   }, [isSelecting, selection]);
