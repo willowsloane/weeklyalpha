@@ -79,10 +79,10 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
   const { data: runs } = await supabase
     .from("newsletter_pipeline_runs")
     .select("id, week_of, status, selected_fund_metric_id, content_output")
-    .in("status", ["awaiting_approval", "approved", "sent"])
+    .in("status", ["approved", "sent"])
     .not("content_output", "eq", "{}")
     .not("selected_fund_metric_id", "is", null)
-    .order("week_of", { ascending: false })
+    .order("approved_at", { ascending: false })
     .limit(limit);
 
   if (!runs || runs.length === 0) return [];
