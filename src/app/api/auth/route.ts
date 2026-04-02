@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 
-const SITE_PASSWORD = process.env.SITE_PASSWORD || "expa-2026";
-
 export async function POST(request: Request) {
   const { password } = await request.json();
+  const sitePassword = process.env.SITE_PASSWORD || "expa-2026";
 
-  if (password === SITE_PASSWORD) {
+  if (password === sitePassword) {
     const response = NextResponse.json({ authenticated: true });
     response.cookies.set("wa_auth", "authenticated", {
       httpOnly: true,
