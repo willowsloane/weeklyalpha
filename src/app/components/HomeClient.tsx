@@ -1,6 +1,7 @@
 "use client";
 
 import { FadeUp, StaggerCards, StaggerChild, BackgroundLines, BarAnimation } from "./Animations";
+import { NewsSection } from "./NewsSection";
 import type { FeaturedIssue } from "@/lib/data";
 import Link from "next/link";
 import Image from "next/image";
@@ -189,6 +190,9 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
           </StaggerCards>
         </div>
       </section>
+
+      {/* ── Market News ── */}
+      <NewsSection />
 
       {/* ── How it works ── */}
       <section id="how" style={{ background: "var(--off-white)", borderTop: "1px solid var(--border-light)", borderBottom: "1px solid var(--border-light)" }}>
