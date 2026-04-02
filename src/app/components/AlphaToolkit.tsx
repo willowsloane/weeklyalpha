@@ -189,6 +189,8 @@ export default function AlphaToolkit() {
             image: m.image,
           })),
           currentPath: window.location.pathname,
+          pageTitle: document.title,
+          pageText: getVisiblePageContext(),
         }),
       });
 
@@ -707,6 +709,41 @@ export default function AlphaToolkit() {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────
+
+function getVisiblePageContext(): string {
+  // Grab key page signals: headings, fund names, metrics, article content
+  const parts: string[] = [];
+
+  // Page heading hierarchy
+  const headings = document.querySelectorAll("h1, h2, h3");
+  headings.forEach((h) => {
+    const text = (h as HTMLElement).innerText?.trim();
+    if (text) parts.push(`[${h.tagName}] ${text}`);
+  });
+
+  // Any visible metric values (look for common metric patterns)
+  const allText = document.body.innerText || "";
+  const metricMatches = allText.match(/(?:IRR|TVPI|DPI|MOIC|Net IRR|Gross IRR|Fund Size|Vintage)[:\s]*[\d$.%x]+/gi);
+  if (metricMatches) {
+    parts.push("[Visible Metrics] " + [...new Set(metricMatches)].join(", "));
+  }
+
+  // Fund name candidates (bold text near metrics, or article titles)
+  const boldEls = document.querySelectorAll("strong, b, [class*='font-bold']");
+  const fundNames: string[] = [];
+  boldEls.forEach((el) => {
+    const t = (el as HTMLElement).innerText?.trim();
+    if (t && t.length > 3 && t.length < 80 && !t.includes("\n") && /[A-Z]/.test(t)) {
+      fundNames.push(t);
+    }
+  });
+  if (fundNames.length) {
+    parts.push("[Bold/Fund Names] " + [...new Set(fundNames.slice(0, 10))].join(", "));
+  }
+
+  // Truncate to avoid massive payloads
+  return parts.join("\n").slice(0, 2000);
+}
 
 function renderInlineFormatting(text: string): React.ReactNode {
   // Handle **bold** and `code` inline
