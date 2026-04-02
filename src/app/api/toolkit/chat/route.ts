@@ -1,7 +1,8 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { createClient } from "@supabase/supabase-js";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const GEMINI_API = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse";
 
 function getSupabase() {
   return createClient(
@@ -66,9 +67,9 @@ export async function POST(req: Request) {
     currentPath?: string;
   };
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }), {
+    return new Response(JSON.stringify({ error: "GEMINI_API_KEY not configured" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
@@ -79,9 +80,7 @@ export async function POST(req: Request) {
     getFundContext(),
   ]);
 
-  const anthropic = new Anthropic({ apiKey });
-
-  const systemPrompt = `You are Alpha — the AI research assistant for Weekly Alpha, a private fund intelligence platform trusted by LPs, allocators, and fund managers.
+  const systemInstruction = `You are Alpha — the AI research assistant for Weekly Alpha, a private fund intelligence platform trusted by LPs, allocators, and fund managers.
 
 You have deep expertise in private markets: PE, VC, real estate, credit, infrastructure, secondaries, and fund-of-funds. You speak with authority but remain accessible — think Bloomberg Terminal meets a sharp analyst briefing.
 
@@ -104,47 +103,91 @@ ${currentPath ? `- The user is currently viewing: ${currentPath}` : ""}
 
 TONE: Authoritative, precise, no fluff. Like a senior analyst at a top-tier LP.`;
 
-  const anthropicMessages = messages.map((m) => {
-    if (m.role === "assistant") {
-      return { role: "assistant" as const, content: m.content };
-    }
+  // Build Gemini contents array
+  const contents = messages.map((m) => {
+    const parts: any[] = [];
+
     if (m.image) {
-      return {
-        role: "user" as const,
-        content: [
-          {
-            type: "image" as const,
-            source: {
-              type: "base64" as const,
-              media_type: "image/png" as const,
-              data: m.image,
-            },
-          },
-          { type: "text" as const, text: m.content || "What do you see in this screenshot? Analyze it." },
-        ],
-      };
+      parts.push({
+        inlineData: {
+          mimeType: "image/png",
+          data: m.image,
+        },
+      });
     }
-    return { role: "user" as const, content: m.content };
+
+    parts.push({ text: m.content || "What do you see in this screenshot? Analyze it." });
+
+    return {
+      role: m.role === "assistant" ? "model" : "user",
+      parts,
+    };
   });
 
-  const stream = anthropic.messages.stream({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2048,
-    system: systemPrompt,
-    messages: anthropicMessages,
+  const geminiBody = {
+    system_instruction: { parts: [{ text: systemInstruction }] },
+    contents,
+    generationConfig: {
+      maxOutputTokens: 2048,
+      temperature: 0.7,
+    },
+  };
+
+  const geminiRes = await fetch(`${GEMINI_API}&key=${apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(geminiBody),
   });
 
+  if (!geminiRes.ok) {
+    const err = await geminiRes.text();
+    return new Response(JSON.stringify({ error: `Gemini API error: ${err}` }), {
+      status: 502,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Parse Gemini SSE stream and forward as plain text
   const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+  const reader = geminiRes.body!.getReader();
+
   const readable = new ReadableStream({
     async start(controller) {
+      let buffer = "";
       try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            const jsonStr = line.slice(6).trim();
+            if (!jsonStr) continue;
+
+            try {
+              const parsed = JSON.parse(jsonStr);
+              const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) {
+                controller.enqueue(encoder.encode(text));
+              }
+            } catch {
+              // skip malformed JSON chunks
+            }
           }
+        }
+
+        // Flush remaining buffer
+        if (buffer.startsWith("data: ")) {
+          try {
+            const parsed = JSON.parse(buffer.slice(6).trim());
+            const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) controller.enqueue(encoder.encode(text));
+          } catch { /* ignore */ }
         }
       } catch (e: any) {
         controller.enqueue(encoder.encode(`\n\n[Error: ${e.message}]`));
