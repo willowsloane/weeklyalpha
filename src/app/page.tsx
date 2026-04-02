@@ -2,7 +2,6 @@ import {
   FadeUp,
   StaggerCards,
   StaggerChild,
-  AnimatedTitle,
   BackgroundLines,
   BarAnimation,
 } from "./components/Animations";
@@ -11,102 +10,251 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
 
+      {/* ── Top bar ── */}
+      <div className="py-3 text-center" style={{ background: "var(--green-deep)", color: "rgba(255,255,255,0.9)" }}>
+        <p className="text-[13px] font-medium tracking-[0.02em]">
+          Smart private fund intelligence — delivered free, every Monday.{" "}
+          <a href="#subscribe" className="underline font-semibold" style={{ color: "#fff" }}>Subscribe now &rarr;</a>
+        </p>
+      </div>
+
       {/* ── Nav ── */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm" style={{ borderBottom: "1px solid var(--border-light)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 h-[72px] flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5">
-            <span
-              className="text-[22px] font-bold tracking-[-0.02em]"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
-            >
-              Weekly Alpha
-            </span>
-          </a>
-          <div className="flex items-center gap-8">
-            <a href="#how" className="hidden md:block text-[15px] font-medium" style={{ color: "var(--text-secondary)" }}>How It Works</a>
-            <a href="#preview" className="hidden md:block text-[15px] font-medium" style={{ color: "var(--text-secondary)" }}>Preview</a>
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10 h-[56px] flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <a href="#subscribe" className="text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Subscribe</a>
+            <a href="#preview" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Latest Issue</a>
+            <a href="#how" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>How It Works</a>
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="#gp" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Submit a Fund</a>
             <a
               href="#subscribe"
-              className="text-[14px] font-semibold px-5 py-2.5 rounded-[6px] transition-colors hover:opacity-90"
-              style={{ background: "var(--green-deep)", color: "#fff" }}
+              className="text-[12px] font-semibold px-4 py-2 rounded-[4px] tracking-[0.02em]"
+              style={{ background: "var(--text-primary)", color: "#fff" }}
             >
-              Subscribe Free
+              Sign Up
             </a>
           </div>
         </div>
       </nav>
 
-      {/* ── Hero ── */}
+      {/* ── Hero: Massive title ── */}
       <section className="relative overflow-hidden" style={{ background: "var(--off-white)" }}>
         <BackgroundLines />
-
-        <div className="relative max-w-[1200px] mx-auto px-6 lg:px-10 pt-20 pb-24 md:pt-32 md:pb-36">
-          <div className="max-w-[760px] mx-auto text-center">
-
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-10 pt-16 md:pt-24 pb-8">
+          <div className="text-center">
             <FadeUp>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-10" style={{ background: "var(--green-pale)" }}>
-                <span className="w-2 h-2 rounded-full pulse-soft" style={{ background: "var(--green)" }} />
-                <span className="text-[13px] font-semibold" style={{ color: "var(--green-deep)" }}>
-                  Delivered every Monday
-                </span>
-              </div>
+              <h1
+                className="text-[72px] md:text-[120px] lg:text-[140px] font-extrabold tracking-[-0.04em] leading-[0.9] mb-5"
+                style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
+              >
+                Weekly Alpha
+              </h1>
             </FadeUp>
-
-            <h1
-              className="text-[48px] md:text-[76px] leading-[1.02] font-bold tracking-[-0.035em] mb-8"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
-            >
-              <AnimatedTitle text="One fund." />
-              <br />
-              <AnimatedTitle text="Every week." />
-            </h1>
-
-            <FadeUp delay={0.3}>
-              <p className="text-[18px] md:text-[22px] leading-[1.55] mb-12 max-w-[560px] mx-auto" style={{ color: "var(--text-body)" }}>
-                Private fund analysis with real performance data, peer benchmarks, and strategic commentary — in your inbox every Monday.
+            <FadeUp delay={0.15}>
+              <p
+                className="text-[18px] md:text-[22px] font-medium tracking-[-0.01em] mb-3"
+                style={{ color: "var(--green)" }}
+              >
+                Private fund intelligence for LPs, allocators & fund managers
+              </p>
+            </FadeUp>
+            <FadeUp delay={0.25}>
+              <p className="text-[15px] mb-10" style={{ color: "var(--text-muted)" }}>
+                One exceptional fund. Benchmarked. Analyzed. Every Monday.
               </p>
             </FadeUp>
 
-            <FadeUp delay={0.45}>
-              <div className="flex flex-col sm:flex-row gap-3 max-w-[480px] mx-auto">
+            {/* Email inline */}
+            <FadeUp delay={0.35}>
+              <div className="flex flex-col sm:flex-row gap-3 max-w-[440px] mx-auto mb-4">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 h-[54px] px-5 text-[15px] rounded-[6px] transition-all outline-none focus:ring-2 focus:ring-[var(--green-accent)]"
-                  style={{ background: "var(--white)", border: "1.5px solid var(--border)", color: "var(--text-primary)" }}
+                  className="flex-1 h-[50px] px-5 text-[15px] rounded-[4px] outline-none transition-all focus:ring-2 focus:ring-[var(--green-accent)]"
+                  style={{ background: "#fff", border: "1px solid var(--border)", color: "var(--text-primary)" }}
                 />
                 <button
-                  className="h-[54px] px-8 text-[15px] font-semibold rounded-[6px] transition-all hover:opacity-90 shrink-0"
+                  className="h-[50px] px-7 text-[14px] font-semibold rounded-[4px] transition-all hover:opacity-90 shrink-0"
                   style={{ background: "var(--green-deep)", color: "#fff" }}
                 >
-                  Subscribe
+                  Subscribe Free
                 </button>
               </div>
-            </FadeUp>
-
-            <FadeUp delay={0.55}>
-              <p className="mt-5 text-[13px]" style={{ color: "var(--text-muted)" }}>
-                Free. No spam. Unsubscribe anytime.
+              <p className="text-[12px] mb-14" style={{ color: "var(--text-muted)" }}>
+                Join 2,400+ fund professionals &middot; Free forever
               </p>
             </FadeUp>
           </div>
         </div>
+
+        {/* ── Divider ── */}
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
+          <div style={{ height: "1px", background: "var(--border)" }} />
+        </div>
+
+        {/* ── Featured article / hero image ── */}
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-12 md:py-16">
+          <FadeUp delay={0.1}>
+            <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Image */}
+              <div
+                className="aspect-[4/3] rounded-[10px] overflow-hidden relative"
+                style={{
+                  background: "linear-gradient(135deg, #064E37 0%, #0A7B55 40%, #21759B 100%)",
+                }}
+              >
+                {/* Decorative finance visual */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg width="320" height="240" viewBox="0 0 320 240" fill="none" className="opacity-20">
+                    <path d="M20 200L60 160L100 180L140 120L180 140L220 80L260 100L300 40" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M20 200L60 170L100 190L140 140L180 155L220 100L260 115L300 60" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                    <circle cx="140" cy="120" r="4" fill="white" opacity="0.8"/>
+                    <circle cx="220" cy="80" r="4" fill="white" opacity="0.8"/>
+                    <circle cx="300" cy="40" r="4" fill="white" opacity="0.8"/>
+                  </svg>
+                </div>
+                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
+                  <span className="text-[11px] font-bold tracking-[0.15em] uppercase mb-3" style={{ color: "rgba(255,255,255,0.6)" }}>
+                    This Week&apos;s Feature
+                  </span>
+                  <h2 className="text-[28px] md:text-[36px] font-bold tracking-[-0.02em] leading-[1.1] mb-2" style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#fff" }}>
+                    Meridian Ventures Fund III
+                  </h2>
+                  <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.7)" }}>
+                    Early-stage venture &middot; 2022 vintage &middot; $180M &middot; Top quartile IRR
+                  </p>
+                </div>
+              </div>
+
+              {/* Featured text */}
+              <div>
+                <span className="inline-block text-[11px] font-bold tracking-[0.15em] uppercase mb-5 pb-2" style={{ color: "var(--green)", borderBottom: "2px solid var(--green)" }}>
+                  Featured Analysis
+                </span>
+                <h3
+                  className="text-[30px] md:text-[38px] font-bold tracking-[-0.025em] leading-[1.12] mb-5"
+                  style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
+                >
+                  How Meridian&apos;s Fund III became the top-performing 2022 vintage vehicle
+                </h3>
+                <p className="text-[16px] leading-[1.7] mb-6" style={{ color: "var(--text-secondary)" }}>
+                  With a net IRR of 28.4% and TVPI of 1.8x, Meridian Ventures Fund III has quietly become one of the standout early-stage vehicles of its vintage. We break down the portfolio, the team, and what it means for LPs evaluating re-ups.
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[12px] font-semibold" style={{ color: "var(--text-muted)" }}>5 min read</span>
+                  </div>
+                  <span style={{ color: "var(--border)" }}>&middot;</span>
+                  <span className="text-[12px] font-semibold" style={{ color: "var(--text-muted)" }}>March 31, 2026</span>
+                </div>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
       </section>
 
-      {/* ── Trust bar ── */}
-      <section className="py-12" style={{ borderBottom: "1px solid var(--border-light)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+      {/* ── Divider with key stats ── */}
+      <section style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
+          <StaggerCards className="grid grid-cols-2 md:grid-cols-4 divide-x" style={{ borderColor: "var(--border-light)" }}>
+            {[
+              { value: "28.4%", label: "Net IRR", note: "Top Quartile" },
+              { value: "1.8x", label: "TVPI", note: "vs 1.4x median" },
+              { value: "0.6x", label: "DPI", note: "Early distributions" },
+              { value: "20/8", label: "Carry / Hurdle", note: "Standard terms" },
+            ].map((stat) => (
+              <StaggerChild key={stat.label} className="py-8 px-6 md:px-10 text-center">
+                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase mb-2" style={{ color: "var(--text-muted)" }}>{stat.label}</p>
+                <p className="text-[36px] md:text-[42px] font-bold tracking-[-0.03em] leading-none mb-1" style={{ color: "var(--text-primary)" }}>{stat.value}</p>
+                <p className="text-[12px] font-medium" style={{ color: "var(--green)" }}>{stat.note}</p>
+              </StaggerChild>
+            ))}
+          </StaggerCards>
+        </div>
+      </section>
+
+      {/* ── Recent issues grid ── */}
+      <section className="py-20 md:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           <FadeUp>
-            <p className="text-[12px] font-semibold tracking-[0.12em] uppercase text-center mb-8" style={{ color: "var(--text-muted)" }}>
-              Trusted by professionals at
-            </p>
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-3" style={{ color: "var(--green)" }}>Recent Issues</p>
+                <h2
+                  className="text-[32px] md:text-[42px] font-bold tracking-[-0.025em] leading-[1.08]"
+                  style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
+                >
+                  Past featured funds
+                </h2>
+              </div>
+              <a href="#" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--green-deep)" }}>
+                View all &rarr;
+              </a>
+            </div>
           </FadeUp>
-          <StaggerCards className="flex flex-wrap items-center justify-center gap-x-14 gap-y-5">
-            {["Blackstone", "KKR", "Tiger Global", "Sequoia", "a16z", "Bridgewater", "Apollo"].map((firm) => (
-              <StaggerChild key={firm}>
-                <span className="text-[15px] font-semibold tracking-[-0.01em]" style={{ color: "var(--text-muted)" }}>
-                  {firm}
-                </span>
+
+          <StaggerCards className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                tag: "Private Equity",
+                tagColor: "#7C3AED",
+                title: "Summit Partners Growth Equity VI",
+                desc: "Growth equity vehicle targeting $2B+ with a focus on technology-enabled services. 22.1% net IRR positions it firmly in the top quartile.",
+                date: "Mar 24, 2026",
+                gradient: "linear-gradient(135deg, #4C1D95 0%, #7C3AED 60%, #A78BFA 100%)",
+              },
+              {
+                tag: "Venture Capital",
+                tagColor: "#059669",
+                title: "Foundry Group Next Fund II",
+                desc: "Boulder-based early-stage firm known for thesis-driven investing in infrastructure software. Consistent top-decile returns since 2007.",
+                date: "Mar 17, 2026",
+                gradient: "linear-gradient(135deg, #064E37 0%, #059669 60%, #34D399 100%)",
+              },
+              {
+                tag: "Real Estate",
+                tagColor: "#D97706",
+                title: "Starwood Opportunity Fund XII",
+                desc: "Opportunistic real estate fund focused on distressed assets and value-add properties across North America and Europe.",
+                date: "Mar 10, 2026",
+                gradient: "linear-gradient(135deg, #92400E 0%, #D97706 60%, #FCD34D 100%)",
+              },
+            ].map((issue) => (
+              <StaggerChild key={issue.title}>
+                <article className="group cursor-pointer">
+                  {/* Card image */}
+                  <div
+                    className="aspect-[16/10] rounded-[8px] overflow-hidden mb-5 relative transition-transform group-hover:scale-[1.01]"
+                    style={{ background: issue.gradient }}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center opacity-15">
+                      <svg width="200" height="150" viewBox="0 0 200 150" fill="none">
+                        <path d="M10 130L40 100L70 115L100 70L130 90L160 50L190 30" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    </div>
+                    <div className="absolute bottom-4 left-4">
+                      <span
+                        className="text-[11px] font-bold tracking-[0.08em] uppercase px-2.5 py-1 rounded-[3px]"
+                        style={{ background: "rgba(255,255,255,0.2)", color: "#fff", backdropFilter: "blur(8px)" }}
+                      >
+                        {issue.tag}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Card text */}
+                  <h3
+                    className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:underline"
+                    style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
+                  >
+                    {issue.title}
+                  </h3>
+                  <p className="text-[14px] leading-[1.6] mb-3" style={{ color: "var(--text-secondary)" }}>
+                    {issue.desc}
+                  </p>
+                  <p className="text-[12px] font-medium" style={{ color: "var(--text-muted)" }}>{issue.date}</p>
+                </article>
               </StaggerChild>
             ))}
           </StaggerCards>
@@ -114,13 +262,13 @@ export default function Home() {
       </section>
 
       {/* ── How it works ── */}
-      <section id="how" className="py-24 md:py-36">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
+      <section id="how" style={{ background: "var(--off-white)", borderTop: "1px solid var(--border-light)", borderBottom: "1px solid var(--border-light)" }}>
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10 py-20 md:py-28">
           <FadeUp>
-            <div className="text-center mb-20">
+            <div className="text-center mb-16">
               <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green)" }}>How It Works</p>
               <h2
-                className="text-[36px] md:text-[52px] font-bold tracking-[-0.025em] leading-[1.08]"
+                className="text-[32px] md:text-[48px] font-bold tracking-[-0.025em] leading-[1.08]"
                 style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
               >
                 Institutional intelligence,<br className="hidden md:block" /> delivered simply.
@@ -128,7 +276,7 @@ export default function Home() {
             </div>
           </FadeUp>
 
-          <StaggerCards className="grid md:grid-cols-3 gap-8 lg:gap-14">
+          <StaggerCards className="grid md:grid-cols-3 gap-10 lg:gap-16">
             {[
               { num: "01", title: "Sourced & Verified", body: "We identify private funds with compelling track records and verify performance data against public filings and LP references." },
               { num: "02", title: "Benchmarked", body: "Each fund is ranked against peers by strategy, vintage year, geography, and size — the same depth allocators pay thousands for." },
@@ -139,79 +287,35 @@ export default function Home() {
                   {step.num}
                 </span>
                 <h3 className="text-[22px] font-bold tracking-[-0.015em] mb-3" style={{ color: "var(--text-primary)" }}>{step.title}</h3>
-                <p className="text-[16px] leading-[1.65]" style={{ color: "var(--text-secondary)" }}>{step.body}</p>
+                <p className="text-[15px] leading-[1.65]" style={{ color: "var(--text-secondary)" }}>{step.body}</p>
               </StaggerChild>
             ))}
           </StaggerCards>
         </div>
       </section>
 
-      {/* ── Sample issue ── */}
-      <section id="preview" style={{ background: "var(--off-white)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 py-24 md:py-36">
+      {/* ── Benchmark preview ── */}
+      <section id="preview" className="py-20 md:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
           <FadeUp>
-            <div className="text-center mb-16">
-              <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green)" }}>Preview</p>
+            <div className="text-center mb-14">
+              <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green)" }}>Inside Every Issue</p>
               <h2
-                className="text-[36px] md:text-[52px] font-bold tracking-[-0.025em] leading-[1.08]"
+                className="text-[32px] md:text-[48px] font-bold tracking-[-0.025em] leading-[1.08]"
                 style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
               >
-                What you&apos;ll get.
+                Real benchmarks. Real data.
               </h2>
             </div>
           </FadeUp>
 
-          <FadeUp delay={0.15}>
-            <div
-              className="max-w-[840px] mx-auto rounded-[14px] overflow-hidden"
-              style={{ background: "var(--white)", border: "1px solid var(--border)", boxShadow: "0 4px 24px rgba(0,0,0,0.04)" }}
-            >
-              {/* Header */}
-              <div className="px-8 md:px-10 pt-8 md:pt-10 pb-6" style={{ borderBottom: "1px solid var(--border-light)" }}>
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="text-[12px] font-semibold tracking-[0.06em] uppercase px-3 py-1.5 rounded-[4px]" style={{ background: "var(--green-pale)", color: "var(--green-deep)" }}>
-                    Issue #12
-                  </span>
-                  <span className="text-[13px]" style={{ color: "var(--text-muted)" }}>March 31, 2026</span>
-                </div>
-                <h3
-                  className="text-[28px] md:text-[36px] font-bold tracking-[-0.02em] mb-2"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
-                >
-                  Meridian Ventures Fund III
-                </h3>
-                <p className="text-[15px]" style={{ color: "var(--text-secondary)" }}>
-                  Early-stage venture &middot; 2022 vintage &middot; $180M target
-                </p>
-              </div>
-
-              {/* Stats */}
-              <StaggerCards className="grid grid-cols-2 md:grid-cols-4" style={{ borderBottom: "1px solid var(--border-light)" }}>
-                {[
-                  { label: "Net IRR", value: "28.4%", note: "Top Quartile" },
-                  { label: "TVPI", value: "1.8x", note: "vs 1.4x median" },
-                  { label: "DPI", value: "0.6x", note: "Early distributions" },
-                  { label: "Carry", value: "20%", note: "8% hurdle" },
-                ].map((stat, i) => (
-                  <StaggerChild
-                    key={stat.label}
-                    className="px-6 md:px-8 py-6"
-                  >
-                    <div style={{ borderRight: i < 3 ? "1px solid var(--border-light)" : "none" }} className="pr-4">
-                      <p className="text-[11px] font-semibold tracking-[0.1em] uppercase mb-2" style={{ color: "var(--text-muted)" }}>{stat.label}</p>
-                      <p className="text-[30px] font-bold tracking-[-0.02em] leading-none mb-1.5" style={{ color: "var(--text-primary)" }}>{stat.value}</p>
-                      <p className="text-[12px] font-medium" style={{ color: "var(--green)" }}>{stat.note}</p>
-                    </div>
-                  </StaggerChild>
-                ))}
-              </StaggerCards>
-
-              {/* Benchmark bars — animated */}
+          <FadeUp delay={0.1}>
+            <div className="max-w-[800px] mx-auto rounded-[10px] overflow-hidden" style={{ background: "var(--off-white)", border: "1px solid var(--border)" }}>
               <div className="px-8 md:px-10 py-8">
-                <p className="text-[11px] font-semibold tracking-[0.1em] uppercase mb-6" style={{ color: "var(--text-muted)" }}>
-                  Peer Benchmark — Early-Stage Venture, 2022
+                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase mb-7" style={{ color: "var(--text-muted)" }}>
+                  Peer Benchmark — Early-Stage Venture, 2022 Vintage
                 </p>
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {[
                     { label: "This Fund", pct: 82, active: true },
                     { label: "Top Quartile", pct: 75, active: false },
@@ -223,99 +327,75 @@ export default function Home() {
                         {bar.label}
                       </span>
                       <BarAnimation width={bar.pct} active={bar.active} delay={i * 0.1} />
-                      <span className="text-[13px] font-semibold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: "var(--font-mono), monospace" }}>
+                      <span className="text-[13px] font-bold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: "var(--font-mono), monospace" }}>
                         {bar.pct}th
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
+
+              {/* Divider */}
+              <div className="mx-8 md:mx-10" style={{ height: "1px", background: "var(--border)" }} />
+
+              {/* What's included */}
+              <div className="px-8 md:px-10 py-8 grid grid-cols-2 gap-6">
+                {[
+                  "Performance Breakdown",
+                  "Peer Benchmarking",
+                  "Fee & Term Analysis",
+                  "Editorial Commentary",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="8" fill="var(--green-pale)"/>
+                      <path d="M5 8L7 10L11 6" stroke="var(--green-deep)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-[14px] font-medium" style={{ color: "var(--text-body)" }}>{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </FadeUp>
-        </div>
-      </section>
-
-      {/* ── What's inside ── */}
-      <section className="py-24 md:py-36">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <FadeUp>
-            <div className="text-center mb-20">
-              <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green)" }}>Every Issue</p>
-              <h2
-                className="text-[36px] md:text-[52px] font-bold tracking-[-0.025em] leading-[1.08]"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
-              >
-                More than a summary.
-              </h2>
-            </div>
-          </FadeUp>
-
-          <StaggerCards className="grid md:grid-cols-2 gap-6 max-w-[900px] mx-auto">
-            {[
-              { title: "Performance Breakdown", body: "Net IRR, TVPI, DPI, and RVPI in context — not just numbers, but what they mean relative to the market cycle." },
-              { title: "Peer Benchmarking", body: "How the fund ranks against peers by strategy, vintage year, geography, and fund size. Real data, not estimates." },
-              { title: "Fee & Structure Analysis", body: "Management fees, carry, hurdle rates, fund terms — compared against category norms so you know what's standard." },
-              { title: "Editorial Commentary", body: "Our take on the fund's positioning, market timing, team strength, and what makes it noteworthy for allocators." },
-            ].map((item) => (
-              <StaggerChild key={item.title}>
-                <div
-                  className="p-8 rounded-[12px] transition-all hover:shadow-sm"
-                  style={{ background: "var(--off-white)", border: "1px solid var(--border-light)" }}
-                >
-                  <h3 className="text-[18px] font-bold tracking-[-0.01em] mb-2.5" style={{ color: "var(--text-primary)" }}>{item.title}</h3>
-                  <p className="text-[15px] leading-[1.65]" style={{ color: "var(--text-secondary)" }}>{item.body}</p>
-                </div>
-              </StaggerChild>
-            ))}
-          </StaggerCards>
         </div>
       </section>
 
       {/* ── For GPs ── */}
-      <section className="relative overflow-hidden py-24 md:py-36" style={{ background: "var(--green-deep)" }}>
-        {/* Subtle line decoration */}
-        <div className="absolute inset-0 pointer-events-none opacity-10">
+      <section id="gp" className="relative overflow-hidden py-20 md:py-28" style={{ background: "var(--green-deep)" }}>
+        <div className="absolute inset-0 pointer-events-none opacity-[0.07]">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <line x1="33%" y1="0" x2="33%" y2="100%" stroke="white" strokeWidth="0.5" />
-            <line x1="66%" y1="0" x2="66%" y2="100%" stroke="white" strokeWidth="0.5" />
+            <line x1="25%" y1="0" x2="25%" y2="100%" stroke="white" strokeWidth="0.5" />
+            <line x1="50%" y1="0" x2="50%" y2="100%" stroke="white" strokeWidth="0.5" />
+            <line x1="75%" y1="0" x2="75%" y2="100%" stroke="white" strokeWidth="0.5" />
           </svg>
         </div>
-
-        <div className="relative max-w-[1200px] mx-auto px-6 lg:px-10">
-          <div className="max-w-[900px] mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-10">
+          <div className="max-w-[960px] mx-auto grid md:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <div>
                 <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green-accent)" }}>For Fund Managers</p>
-                <h2
-                  className="text-[32px] md:text-[44px] font-bold tracking-[-0.025em] leading-[1.08] mb-6"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#fff" }}
-                >
-                  Get featured to qualified LPs.
+                <h2 className="text-[30px] md:text-[42px] font-bold tracking-[-0.025em] leading-[1.08] mb-5" style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#fff" }}>
+                  Get your fund in front of qualified LPs.
                 </h2>
-                <p className="text-[16px] leading-[1.65] mb-8" style={{ color: "rgba(255,255,255,0.65)" }}>
-                  If you&apos;re fundraising, submit your fund for consideration. One fund is featured each week to our growing network of allocators and family offices.
+                <p className="text-[16px] leading-[1.65] mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  If you&apos;re fundraising, submit your fund for consideration. One fund is featured each week to our network of allocators and family offices.
                 </p>
-                <a
-                  href="#submit"
-                  className="inline-flex items-center gap-2 text-[14px] font-semibold px-7 py-3.5 rounded-[6px] transition-all hover:opacity-90"
-                  style={{ background: "#fff", color: "var(--green-deep)" }}
-                >
+                <a href="#submit" className="inline-flex items-center gap-2 text-[14px] font-semibold px-7 py-3.5 rounded-[4px] transition-all hover:opacity-90" style={{ background: "#fff", color: "var(--green-deep)" }}>
                   Submit Your Fund
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </a>
               </div>
             </FadeUp>
-
-            <StaggerCards className="space-y-6">
+            <StaggerCards className="space-y-5">
               {[
                 { metric: "2,400+", label: "LP subscribers" },
                 { metric: "52%", label: "Average open rate" },
                 { metric: "100%", label: "Institutional audience" },
               ].map((stat) => (
                 <StaggerChild key={stat.label}>
-                  <div className="flex items-baseline justify-between pb-6" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div className="flex items-baseline justify-between pb-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
                     <span className="text-[34px] font-bold tracking-[-0.02em]" style={{ color: "#fff" }}>{stat.metric}</span>
-                    <span className="text-[14px]" style={{ color: "rgba(255,255,255,0.45)" }}>{stat.label}</span>
+                    <span className="text-[14px]" style={{ color: "rgba(255,255,255,0.4)" }}>{stat.label}</span>
                   </div>
                 </StaggerChild>
               ))}
@@ -324,72 +404,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Categories ── */}
-      <section className="py-24 md:py-36">
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10">
-          <FadeUp>
-            <div className="text-center mb-16">
-              <p className="text-[13px] font-semibold tracking-[0.1em] uppercase mb-4" style={{ color: "var(--green)" }}>Coverage</p>
-              <h2
-                className="text-[36px] md:text-[52px] font-bold tracking-[-0.025em] leading-[1.08] mb-5"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
-              >
-                Choose your focus.
-              </h2>
-              <p className="text-[16px] max-w-[460px] mx-auto" style={{ color: "var(--text-secondary)" }}>
-                Select the strategies you care about. We&apos;ll tailor your weekly delivery.
-              </p>
-            </div>
-          </FadeUp>
-
-          <StaggerCards className="flex flex-wrap justify-center gap-4 max-w-[720px] mx-auto">
-            {["Venture Capital", "Private Equity", "Crypto & Digital Assets", "Real Estate", "Credit & Fixed Income", "Infrastructure", "Secondaries"].map((cat) => (
-              <StaggerChild key={cat}>
-                <button
-                  className="text-[14px] font-medium px-6 py-3 rounded-full transition-all hover:border-[var(--green)] hover:text-[var(--green-deep)]"
-                  style={{ background: "var(--white)", border: "1.5px solid var(--border)", color: "var(--text-body)" }}
-                >
-                  {cat}
-                </button>
-              </StaggerChild>
-            ))}
-          </StaggerCards>
-        </div>
-      </section>
-
       {/* ── Final CTA ── */}
       <section id="subscribe" className="relative overflow-hidden py-24 md:py-36" style={{ background: "var(--off-white)" }}>
         <BackgroundLines />
-        <div className="relative max-w-[1200px] mx-auto px-6 lg:px-10 text-center">
+        <div className="relative max-w-[1280px] mx-auto px-6 lg:px-10 text-center">
           <FadeUp>
             <h2
-              className="text-[40px] md:text-[64px] font-bold tracking-[-0.035em] leading-[1.05] mb-7"
+              className="text-[40px] md:text-[72px] font-bold tracking-[-0.04em] leading-[1.02] mb-6"
               style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}
             >
-              Start getting smarter<br className="hidden md:block" /> about private funds.
+              Start your Monday<br className="hidden md:block" /> with alpha.
             </h2>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <p className="text-[17px] mb-12 max-w-[480px] mx-auto leading-[1.6]" style={{ color: "var(--text-secondary)" }}>
-              Join fund managers and allocators who start every Monday with institutional-grade fund analysis.
+            <p className="text-[17px] mb-10 max-w-[440px] mx-auto leading-[1.6]" style={{ color: "var(--text-secondary)" }}>
+              Join 2,400+ fund professionals who start every week with institutional-grade private fund analysis.
             </p>
           </FadeUp>
           <FadeUp delay={0.2}>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-[480px] mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-[460px] mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 h-[56px] px-5 text-[15px] rounded-[6px] transition-all outline-none focus:ring-2 focus:ring-[var(--green-accent)]"
-                style={{ background: "var(--white)", border: "1.5px solid var(--border)", color: "var(--text-primary)" }}
+                className="flex-1 h-[54px] px-5 text-[15px] rounded-[4px] outline-none transition-all focus:ring-2 focus:ring-[var(--green-accent)]"
+                style={{ background: "#fff", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               />
               <button
-                className="h-[56px] px-8 text-[15px] font-semibold rounded-[6px] transition-all hover:opacity-90 shrink-0"
+                className="h-[54px] px-8 text-[14px] font-semibold rounded-[4px] transition-all hover:opacity-90 shrink-0"
                 style={{ background: "var(--green-deep)", color: "#fff" }}
               >
                 Subscribe Free
               </button>
             </div>
-            <p className="mt-5 text-[13px]" style={{ color: "var(--text-muted)" }}>
+            <p className="mt-5 text-[12px]" style={{ color: "var(--text-muted)" }}>
               Free forever &middot; No spam &middot; Unsubscribe anytime
             </p>
           </FadeUp>
@@ -397,9 +444,9 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-10" style={{ borderTop: "1px solid var(--border-light)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-[16px] font-bold tracking-[-0.01em]" style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}>
+      <footer className="py-10" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-[18px] font-bold tracking-[-0.01em]" style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "var(--text-primary)" }}>
             Weekly Alpha
           </span>
           <div className="flex items-center gap-6">
