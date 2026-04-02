@@ -35,12 +35,12 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm" style={{ borderBottom: "1px solid var(--border)" }}>
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-10">
-            <a href="#subscribe" className="text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Subscribe</a>
-            <a href="#preview" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Latest Issue</a>
-            <a href="#how" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>How It Works</a>
+            <a href="#subscribe" className="text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Subscribe</a>
+            <a href="#preview" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Latest Issue</a>
+            <a href="#how" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>How It Works</a>
           </div>
           <div className="flex items-center gap-6">
-            <a href="#gp" className="hidden md:block text-[13px] font-medium" style={{ color: "var(--text-secondary)" }}>Submit a Fund</a>
+            <a href="#gp" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Submit a Fund</a>
             <a href="#subscribe" className="text-[12px] font-semibold px-4 py-2 rounded-[4px] tracking-[0.02em]" style={{ background: "var(--text-primary)", color: "#fff" }}>
               Sign Up
             </a>
@@ -64,7 +64,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
               </p>
             </FadeUp>
             <FadeUp delay={0.25}>
-              <p className="text-[15px] mb-10" style={{ color: "var(--text-muted)" }}>
+              <p className="text-[18px] font-medium mb-10" style={{ color: "var(--text-body)" }}>
                 One exceptional fund. Benchmarked. Analyzed. Every Monday.
               </p>
             </FadeUp>
@@ -75,7 +75,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
                   Subscribe Free
                 </button>
               </div>
-              <p className="text-[12px] mb-14" style={{ color: "var(--text-muted)" }}>
+              <p className="text-[14px] font-medium mb-14" style={{ color: "var(--text-secondary)" }}>
                 Over 30,000 fund documents analysed &middot; Free forever
               </p>
             </FadeUp>
@@ -178,10 +178,10 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
                     <h3 className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:underline" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
                       {issue.fundName}
                     </h3>
-                    <p className="text-[14px] leading-[1.6] mb-3" style={{ color: "var(--text-secondary)" }}>
+                    <p className="text-[15px] leading-[1.6] mb-3" style={{ color: "var(--text-body)" }}>
                       {issue.previewText || `${issue.strategyLabel} fund analysis with performance data and peer benchmarks.`}
                     </p>
-                    <p className="text-[12px] font-medium" style={{ color: "var(--text-muted)" }}>{formatDate(issue.weekOf)}</p>
+                    <p className="text-[13px] font-semibold" style={{ color: "var(--text-secondary)" }}>{formatDate(issue.weekOf)}</p>
                   </article>
                 </Link>
               </StaggerChild>
