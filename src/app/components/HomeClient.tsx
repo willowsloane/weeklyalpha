@@ -90,29 +90,29 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
           <FadeUp delay={0.1}>
             <Link href={featured.pipelineRunId !== "placeholder" ? `/issue/${featured.pipelineRunId}` : "#preview"}>
               <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center group cursor-pointer">
-                <div className="aspect-[4/3] rounded-[10px] overflow-hidden relative">
+                <div className="aspect-[3/2] rounded-[10px] overflow-hidden relative">
                   <Image src={featured.imageUrl} alt={featured.fundName} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%)" }} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.05) 100%)" }} />
                   {featured.irrNet && (
                     <div className="absolute top-5 right-5">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>Net IRR</p>
-                      <p className="text-[32px] font-bold tracking-[-0.03em] leading-none" style={{ color: "#fff", fontFamily: MONO }}>{featured.irrNet}</p>
+                      <p className="text-[28px] font-bold tracking-[-0.02em] leading-none" style={{ color: "rgba(255,255,255,0.9)", fontFamily: MONO }}>{featured.irrNet}</p>
+                      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold mt-1 text-right" style={{ color: "rgba(255,255,255,0.5)" }}>Net IRR</p>
                     </div>
                   )}
-                  <div className="absolute inset-x-0 bottom-0 p-7">
-                    {isLive && <span className="text-[10px] font-bold tracking-[0.12em] uppercase mb-2 inline-flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.6)" }}><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />Live from pipeline</span>}
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[10px] font-bold tracking-[0.1em] uppercase px-2 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(12px)" }}>{featured.strategyLabel}</span>
-                      {featured.vintageYear && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{featured.vintageYear} vintage</span>}
-                      {featured.fundSize && <span className="text-[10px] font-semibold" style={{ color: "rgba(255,255,255,0.5)" }}>{featured.fundSize}</span>}
-                    </div>
-                    <h2 className="text-[26px] md:text-[32px] font-bold tracking-[-0.02em] leading-[1.1]" style={{ fontFamily: SERIF, color: "#fff" }}>{featured.fundName}</h2>
+                  <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                    <span className="text-[11px] font-bold tracking-[0.1em] uppercase px-2.5 py-1 rounded-[3px] inline-block mb-3" style={{ background: "rgba(255,255,255,0.15)", color: "#fff", backdropFilter: "blur(12px)" }}>{featured.strategyLabel}</span>
+                    <h2 className="text-[22px] md:text-[28px] font-bold tracking-[-0.02em] leading-[1.15]" style={{ fontFamily: SERIF, color: "#fff" }}>{featured.fundName}</h2>
+                    {(featured.vintageYear || featured.fundSize) && (
+                      <p className="text-[12px] font-medium mt-2" style={{ color: "rgba(255,255,255,0.6)" }}>
+                        {[featured.vintageYear && `${featured.vintageYear} vintage`, featured.fundSize].filter(Boolean).join(" · ")}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div>
                   <span className="inline-block text-[11px] font-bold tracking-[0.15em] uppercase mb-5 pb-2" style={{ color: "var(--green)", borderBottom: "2px solid var(--green)" }}>Featured Analysis</span>
-                  <h3 className="text-[30px] md:text-[38px] font-bold tracking-[-0.025em] leading-[1.12] mb-5 group-hover:underline" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
+                  <h3 className="text-[30px] md:text-[38px] font-bold tracking-[-0.025em] leading-[1.12] mb-5 group-hover:opacity-80" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
                     {featured.subject}
                   </h3>
                   <p className="text-[16px] leading-[1.7] mb-6" style={{ color: "var(--text-secondary)" }}>
@@ -130,20 +130,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
         </div>
       </section>
 
-      {/* ── Key stats ── */}
-      <section style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-10">
-          <StaggerCards className="grid grid-cols-2 md:grid-cols-4 divide-x" style={{ borderColor: "var(--border-light)" }}>
-            {stats.map((stat) => (
-              <StaggerChild key={stat.label} className="py-8 px-6 md:px-10 text-center">
-                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase mb-2" style={{ color: "var(--text-muted)" }}>{stat.label}</p>
-                <p className="text-[36px] md:text-[42px] font-bold tracking-[-0.03em] leading-none mb-1" style={{ color: "var(--text-primary)" }}>{stat.value}</p>
-                <p className="text-[12px] font-medium" style={{ color: "var(--green)" }}>{stat.note}</p>
-              </StaggerChild>
-            ))}
-          </StaggerCards>
-        </div>
-      </section>
+      {/* Stats bar removed — shows dashes when data is incomplete */}
 
       {/* ── Recent issues ── */}
       <section className="py-20 md:py-28">
@@ -176,7 +163,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
                         </div>
                       )}
                     </div>
-                    <h3 className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:underline" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
+                    <h3 className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:opacity-80" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
                       {issue.fundName}
                     </h3>
                     <p className="text-[15px] leading-[1.6] mb-3" style={{ color: "var(--text-body)" }}>

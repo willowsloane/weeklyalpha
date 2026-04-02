@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 3600; // cache 1 hour
 
 const SERPER_KEY = () => process.env.NEXT_PUBLIC_SERPER_API_KEY || process.env.SERPER_API_KEY || "";
 

@@ -106,7 +106,10 @@ export default async function Home() {
   }
 
   const featured = issues[0] || PLACEHOLDER_FEATURED;
-  const pastIssues = issues.length > 1 ? issues.slice(1, 9) : PLACEHOLDER_PAST;
+  // Combine real issues with placeholders to always show a full grid
+  const realPast = issues.slice(1);
+  const needed = Math.max(0, 8 - realPast.length);
+  const pastIssues = [...realPast, ...PLACEHOLDER_PAST.slice(0, needed)];
   const isLive = issues.length > 0;
 
   return <HomeClient featured={featured} pastIssues={pastIssues} isLive={isLive} />;
