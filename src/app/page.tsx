@@ -28,6 +28,8 @@ const PLACEHOLDER_FEATURED: FeaturedIssue = {
   tagColor: "#059669",
   strategyLabel: "Venture Capital",
   imageUrl: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=600&fit=crop&q=80",
+  irrNetBps: 2840, mgmtFeeBps: 200, carryBps: 2000, hurdleBps: 800, tvpiX100: 180, dpiX100: 60,
+  peerIrrQ1: 12.5, peerIrrMedian: 18.2, peerIrrQ3: 24.0, peerFeeMedian: 2.0, irrPercentile: 82,
 };
 
 const PLACEHOLDER_PAST: FeaturedIssue[] = [
@@ -38,6 +40,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #1E3A5F 0%, #2563EB 60%, #60A5FA 100%)", tagColor: "#2563EB", strategyLabel: "Growth Equity",
     imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 2210, mgmtFeeBps: 200, carryBps: 2000, hurdleBps: 800, tvpiX100: 160, dpiX100: 40, peerIrrQ1: 10, peerIrrMedian: 15, peerIrrQ3: 21, peerFeeMedian: 2.0, irrPercentile: 78,
   },
   {
     id: "p2", pipelineRunId: "p2", weekOf: "2026-03-17", fundName: "Foundry Group Next Fund II", gpName: "Foundry Group",
@@ -46,6 +49,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #064E37 0%, #059669 60%, #34D399 100%)", tagColor: "#059669", strategyLabel: "Venture Capital",
     imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: null, mgmtFeeBps: 250, carryBps: 2500, hurdleBps: null, tvpiX100: null, dpiX100: null, peerIrrQ1: null, peerIrrMedian: null, peerIrrQ3: null, peerFeeMedian: 2.0, irrPercentile: null,
   },
   {
     id: "p3", pipelineRunId: "p3", weekOf: "2026-03-10", fundName: "Starwood Opportunity Fund XII", gpName: "Starwood Capital",
@@ -54,6 +58,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #92400E 0%, #D97706 60%, #FCD34D 100%)", tagColor: "#D97706", strategyLabel: "Real Estate",
     imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: null, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: null, dpiX100: null, peerIrrQ1: null, peerIrrMedian: null, peerIrrQ3: null, peerFeeMedian: 1.5, irrPercentile: null,
   },
   {
     id: "p4", pipelineRunId: "p4", weekOf: "2026-03-03", fundName: "Ares Capital Europe V", gpName: "Ares Management",
@@ -62,6 +67,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #701A1A 0%, #DC2626 60%, #FCA5A5 100%)", tagColor: "#DC2626", strategyLabel: "Private Credit",
     imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 1420, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 600, tvpiX100: 125, dpiX100: 35, peerIrrQ1: 8, peerIrrMedian: 11.5, peerIrrQ3: 15, peerFeeMedian: 1.75, irrPercentile: 72,
   },
   {
     id: "p5", pipelineRunId: "p5", weekOf: "2026-02-24", fundName: "Brookfield Infrastructure Fund V", gpName: "Brookfield Asset Management",
@@ -70,6 +76,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #1E3A5F 0%, #0891B2 60%, #67E8F9 100%)", tagColor: "#0891B2", strategyLabel: "Infrastructure",
     imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 1680, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: 135, dpiX100: 20, peerIrrQ1: 9, peerIrrMedian: 13, peerIrrQ3: 17, peerFeeMedian: 1.5, irrPercentile: 80,
   },
   {
     id: "p6", pipelineRunId: "p6", weekOf: "2026-02-17", fundName: "Lexington Capital Partners IX", gpName: "Lexington Partners",

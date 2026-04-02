@@ -315,7 +315,7 @@ export default function AlphaToolkit() {
                 className="text-[13px] font-semibold tracking-wide"
                 style={{ color: "rgba(255,255,255,0.85)" }}
               >
-                Capture
+                Capture AI
               </span>
               {/* Pulse ring */}
               <span

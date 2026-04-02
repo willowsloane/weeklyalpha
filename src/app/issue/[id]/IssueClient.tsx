@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FadeUp } from "../../components/Animations";
+import { PercentileGauge, PeerComparisonChart, FeeComparison, MetricStrip } from "../../components/FundCharts";
 import type { FeaturedIssue } from "@/lib/data";
 
 const SERIF = "var(--font-playfair), Georgia, serif";
@@ -120,8 +121,58 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         </FadeUp>
 
+        {/* ── Visual Charts ── */}
+
+        {/* Percentile gauges */}
+        {issue.irrPercentile != null && (
+          <FadeUp delay={0.25}>
+            <div className="flex flex-wrap justify-center gap-10 py-8 my-6 rounded-[10px]" style={{ background: "#F5F3EF", border: "1px solid #E8E5E0" }}>
+              {issue.irrNet && issue.irrPercentile != null && (
+                <PercentileGauge value={issue.irrNet} label="Net IRR" percentile={issue.irrPercentile} />
+              )}
+              {issue.tvpi && issue.tvpiX100 && (
+                <PercentileGauge value={issue.tvpi} label="TVPI" percentile={75} />
+              )}
+              {issue.dpi && issue.dpiX100 && (
+                <PercentileGauge value={issue.dpi} label="DPI" percentile={60} />
+              )}
+            </div>
+          </FadeUp>
+        )}
+
+        {/* Peer comparison bar chart */}
+        {issue.irrNetBps != null && issue.peerIrrMedian != null && (
+          <FadeUp delay={0.3}>
+            <div className="my-6">
+              <PeerComparisonChart
+                fundIrr={issue.irrNetBps / 100}
+                peerQ1={issue.peerIrrQ1}
+                peerMedian={issue.peerIrrMedian}
+                peerQ3={issue.peerIrrQ3}
+                fundLabel={issue.fundName.length > 25 ? issue.fundName.slice(0, 22) + "..." : issue.fundName}
+              />
+            </div>
+          </FadeUp>
+        )}
+
+        {/* Fee comparison */}
+        {issue.mgmtFeeBps != null && (
+          <FadeUp delay={0.35}>
+            <div className="my-6">
+              <FeeComparison items={[
+                { label: "Management Fee", fundValue: issue.mgmtFeeBps ? issue.mgmtFeeBps / 100 : null, peerValue: issue.peerFeeMedian, unit: "%", lowerIsBetter: true },
+                { label: "Carried Interest", fundValue: issue.carryBps ? issue.carryBps / 100 : null, peerValue: 20, unit: "%", lowerIsBetter: true },
+                { label: "Hurdle Rate", fundValue: issue.hurdleBps ? issue.hurdleBps / 100 : null, peerValue: 8, unit: "%", lowerIsBetter: false },
+              ]} />
+            </div>
+          </FadeUp>
+        )}
+
+        {/* Divider before body */}
+        <div className="my-8" style={{ height: "1px", background: "#E8E5E0" }} />
+
         {/* Body content */}
-        <FadeUp delay={0.25}>
+        <FadeUp delay={0.4}>
           {(issue.bodyHtml) ? (
             <div
               className="py-8"

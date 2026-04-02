@@ -70,6 +70,19 @@ export interface FeaturedIssue {
   tagColor: string;
   strategyLabel: string;
   imageUrl: string;
+  // Raw numeric values for charts
+  irrNetBps: number | null;
+  mgmtFeeBps: number | null;
+  carryBps: number | null;
+  hurdleBps: number | null;
+  tvpiX100: number | null;
+  dpiX100: number | null;
+  // Peer data for charts
+  peerIrrQ1: number | null;
+  peerIrrMedian: number | null;
+  peerIrrQ3: number | null;
+  peerFeeMedian: number | null;
+  irrPercentile: number | null;
 }
 
 export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
@@ -96,12 +109,35 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
 
   const fundMap = new Map((funds || []).map((f: any) => [f.id, f]));
 
+  // Fetch peer data for all strategies/vintages in one go
+  const strategies = [...new Set((funds || []).map((f: any) => f.strategy).filter(Boolean))];
+  let allPeers: any[] = [];
+  for (const strat of strategies) {
+    const { data: peers } = await supabase
+      .from("fund_metrics")
+      .select("strategy, vintage_year, irr_net_bps, mgmt_fee_bps")
+      .eq("strategy", strat)
+      .not("irr_net_bps", "is", null)
+      .limit(200);
+    allPeers = allPeers.concat(peers || []);
+  }
+
   return runs
     .map((run: any) => {
       const fund = fundMap.get(run.selected_fund_metric_id);
       if (!fund) return null;
       const content = run.content_output || {};
       const style = getStrategyStyle(fund.strategy);
+
+      // Compute peer stats for this fund
+      const vMin = (fund.vintage_year || 2020) - 2;
+      const vMax = (fund.vintage_year || 2020) + 2;
+      const peers = allPeers.filter((p: any) => p.strategy === fund.strategy && p.vintage_year >= vMin && p.vintage_year <= vMax && p.irr_net_bps != null);
+      const peerIrrs = peers.map((p: any) => p.irr_net_bps).sort((a: number, b: number) => a - b);
+      const peerFees = peers.filter((p: any) => p.mgmt_fee_bps != null).map((p: any) => p.mgmt_fee_bps).sort((a: number, b: number) => a - b);
+      const irrPercentile = fund.irr_net_bps && peerIrrs.length > 0
+        ? Math.round((peerIrrs.filter((v: number) => v <= fund.irr_net_bps).length / peerIrrs.length) * 100)
+        : null;
 
       return {
         id: fund.id,
@@ -126,6 +162,17 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         tagColor: style.tagColor,
         strategyLabel: formatStrategy(fund.strategy),
         imageUrl: content.selectedImageUrl || content.imageUrls?.[0] || getImageForFund(fund.strategy, fund.fund_name || ""),
+        irrNetBps: fund.irr_net_bps,
+        mgmtFeeBps: fund.mgmt_fee_bps,
+        carryBps: fund.carry_bps,
+        hurdleBps: fund.hurdle_bps,
+        tvpiX100: fund.tvpi_x100,
+        dpiX100: fund.dpi_x100,
+        peerIrrQ1: peerIrrs.length > 3 ? peerIrrs[Math.floor(peerIrrs.length * 0.25)] / 100 : null,
+        peerIrrMedian: peerIrrs.length > 0 ? peerIrrs[Math.floor(peerIrrs.length / 2)] / 100 : null,
+        peerIrrQ3: peerIrrs.length > 3 ? peerIrrs[Math.floor(peerIrrs.length * 0.75)] / 100 : null,
+        peerFeeMedian: peerFees.length > 0 ? peerFees[Math.floor(peerFees.length / 2)] / 100 : null,
+        irrPercentile,
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
