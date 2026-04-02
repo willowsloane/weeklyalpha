@@ -1,6 +1,7 @@
 "use client";
 
 import { FadeUp, StaggerCards, StaggerChild, BackgroundLines, BarAnimation } from "./Animations";
+import { FundHeroImage } from "./FundHeroImage";
 import type { FeaturedIssue } from "@/lib/data";
 import Link from "next/link";
 
@@ -88,27 +89,15 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
           <FadeUp delay={0.1}>
             <Link href={featured.pipelineRunId !== "placeholder" ? `/issue/${featured.pipelineRunId}` : "#preview"}>
               <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center group cursor-pointer">
-                <div className="aspect-[4/3] rounded-[10px] overflow-hidden relative" style={{ background: featured.gradient }}>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg width="320" height="240" viewBox="0 0 320 240" fill="none" className="opacity-20">
-                      <path d="M20 200L60 160L100 180L140 120L180 140L220 80L260 100L300 40" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M20 200L60 170L100 190L140 140L180 155L220 100L260 115L300 60" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
-                      <circle cx="140" cy="120" r="4" fill="white" opacity="0.8"/>
-                      <circle cx="220" cy="80" r="4" fill="white" opacity="0.8"/>
-                      <circle cx="300" cy="40" r="4" fill="white" opacity="0.8"/>
-                    </svg>
-                  </div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-                    {isLive && <span className="text-[10px] font-bold tracking-[0.12em] uppercase mb-2 inline-flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.5)" }}><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />Live from pipeline</span>}
-                    <span className="text-[11px] font-bold tracking-[0.15em] uppercase mb-3" style={{ color: "rgba(255,255,255,0.6)" }}>This Week&apos;s Feature</span>
-                    <h2 className="text-[28px] md:text-[36px] font-bold tracking-[-0.02em] leading-[1.1] mb-2" style={{ fontFamily: SERIF, color: "#fff" }}>
-                      {featured.fundName}
-                    </h2>
-                    <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-                      {featured.strategyLabel} &middot; {featured.vintageYear || "—"} vintage &middot; {featured.fundSize || "—"} {featured.irrNet ? `· ${featured.irrNet} IRR` : ""}
-                    </p>
-                  </div>
-                </div>
+                <FundHeroImage
+                  strategy={featured.strategyLabel}
+                  fundName={featured.fundName}
+                  gradient={featured.gradient}
+                  irrNet={featured.irrNet}
+                  tvpi={featured.tvpi}
+                  vintageYear={featured.vintageYear}
+                  fundSize={featured.fundSize}
+                />
 
                 <div>
                   <span className="inline-block text-[11px] font-bold tracking-[0.15em] uppercase mb-5 pb-2" style={{ color: "var(--green)", borderBottom: "2px solid var(--green)" }}>Featured Analysis</span>
@@ -164,17 +153,16 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
               <StaggerChild key={issue.id}>
                 <Link href={issue.pipelineRunId.startsWith("p") ? "#" : `/issue/${issue.pipelineRunId}`}>
                   <article className="group cursor-pointer">
-                    <div className="aspect-[16/10] rounded-[8px] overflow-hidden mb-5 relative transition-transform group-hover:scale-[1.01]" style={{ background: issue.gradient }}>
-                      <div className="absolute inset-0 flex items-center justify-center opacity-15">
-                        <svg width="200" height="150" viewBox="0 0 200 150" fill="none">
-                          <path d="M10 130L40 100L70 115L100 70L130 90L160 50L190 30" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                        </svg>
-                      </div>
-                      <div className="absolute bottom-4 left-4">
-                        <span className="text-[11px] font-bold tracking-[0.08em] uppercase px-2.5 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.2)", color: "#fff", backdropFilter: "blur(8px)" }}>
-                          {issue.strategyLabel}
-                        </span>
-                      </div>
+                    <div className="mb-5 transition-transform group-hover:scale-[1.005]">
+                      <FundHeroImage
+                        strategy={issue.strategyLabel}
+                        fundName={issue.fundName}
+                        gradient={issue.gradient}
+                        irrNet={issue.irrNet}
+                        tvpi={issue.tvpi}
+                        vintageYear={issue.vintageYear}
+                        fundSize={issue.fundSize}
+                      />
                     </div>
                     <h3 className="text-[20px] font-bold tracking-[-0.015em] leading-[1.25] mb-2.5 group-hover:underline" style={{ fontFamily: SERIF, color: "var(--text-primary)" }}>
                       {issue.fundName}
