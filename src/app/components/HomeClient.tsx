@@ -37,7 +37,7 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 h-[56px] flex items-center justify-between">
           <div className="flex items-center gap-10">
             <a href="#subscribe" className="text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Subscribe</a>
-            <a href="#preview" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Latest Issue</a>
+            <Link href={featured.pipelineRunId !== "placeholder" ? `/issue/${featured.pipelineRunId}` : "#preview"} className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>Latest Issue</Link>
             <a href="#how" className="hidden md:block text-[14px] font-semibold" style={{ color: "var(--text-primary)" }}>How It Works</a>
           </div>
           <div className="flex items-center gap-6">
