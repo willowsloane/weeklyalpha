@@ -170,21 +170,33 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
         </div>
       </footer>
 
-      {/* Global article typography */}
+      {/* Global article typography + Gemini content overrides */}
       <style>{`
-        article h2 { font-family: ${SERIF}; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 2.5em 0 0.8em; color: var(--text-primary); line-height: 1.2; }
-        article h3 { font-family: ${SERIF}; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; margin: 2em 0 0.6em; color: var(--text-primary); line-height: 1.25; }
-        article p { margin: 0 0 1.4em; }
-        article strong, article b { color: var(--text-primary); font-weight: 600; }
-        article ul, article ol { margin: 0 0 1.4em; padding-left: 1.5em; }
+        article h2 { font-family: ${SERIF}; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 2.5em 0 0.8em; color: #1A1714; line-height: 1.2; }
+        article h3 { font-family: ${SERIF}; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 2em 0 0.6em; color: #1A1714; line-height: 1.25; }
+        article p { margin: 0 0 1.3em; color: #2D2A26; }
+        article strong, article b { color: #1A1714; font-weight: 700; }
+        article ul, article ol { margin: 0 0 1.3em; padding-left: 1.5em; }
         article li { margin-bottom: 0.5em; }
-        article blockquote { margin: 2em 0; padding: 1.2em 1.5em; border-left: 3px solid var(--green-deep); background: var(--off-white); border-radius: 0 8px 8px 0; font-style: italic; color: var(--text-secondary); }
-        article table { width: 100%; border-collapse: collapse; margin: 2em 0; font-size: 14px; }
-        article th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-primary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
-        article td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); color: var(--text-body); }
-        article code { font-family: ${MONO}; background: var(--off-white); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
-        article hr { border: none; height: 1px; background: var(--border); margin: 2.5em 0; }
-        article a { color: var(--green-deep); text-decoration: underline; text-underline-offset: 2px; }
+        article blockquote { margin: 2em 0; padding: 1.2em 1.5em; border-left: 3px solid #064E37; background: #F5F3EF; border-radius: 0 8px 8px 0; font-style: normal; color: #2D2A26; }
+        article table { width: 100%; border-collapse: collapse; margin: 1.5em 0; font-size: 15px; }
+        article th { text-align: left; padding: 12px 14px; border-bottom: 2px solid #E8E5E0; font-weight: 700; color: #1A1714; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+        article td { padding: 12px 14px; border-bottom: 1px solid #F0EDE8; color: #2D2A26; }
+        article code { font-family: ${MONO}; background: #F5F3EF; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+        article hr { border: none; height: 1px; background: #E8E5E0; margin: 2.5em 0; }
+        article a { color: #064E37; text-decoration: underline; text-underline-offset: 3px; }
+        /* Fix Gemini grid layouts */
+        article section { margin: 0 0 2em; }
+        article div[style*="grid"] { max-width: 100%; overflow: hidden; }
+        article div[style*="display: grid"] { gap: 12px; }
+        /* Fix bar chart widths */
+        article div[style*="background-color: #064E37"], article div[style*="background: #064E37"] { min-height: 24px; border-radius: 4px; }
+        article div[style*="background-color: #E8E5E0"], article div[style*="background: #E8E5E0"] { min-height: 24px; border-radius: 4px; }
+        /* Risk factor styling */
+        article div[style*="border-left: 3px solid #DC2626"] { padding: 12px 16px; margin-bottom: 12px; background: #FEF2F2; border-radius: 0 6px 6px 0; }
+        /* Callout boxes */
+        article div[style*="background-color: #F5F3EF"], article div[style*="background: #F5F3EF"] { border-radius: 8px; padding: 20px; margin: 1em 0; }
+        article div[style*="background-color: #F5F3EF"] p, article div[style*="background: #F5F3EF"] p { margin-bottom: 0.6em; }
       `}</style>
     </div>
   );
