@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const { password } = await request.json();
-  const sitePassword = process.env.SITE_PASSWORD || "expa-2026";
+  const sitePassword = "expa-2026";
 
   if (password === sitePassword) {
     const response = NextResponse.json({ authenticated: true });
