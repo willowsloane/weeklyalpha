@@ -85,6 +85,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #3F3F46 0%, #71717A 60%, #D4D4D8 100%)", tagColor: "#71717A", strategyLabel: "Secondaries",
     imageUrl: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 1950, mgmtFeeBps: 100, carryBps: 2000, hurdleBps: 800, tvpiX100: 145, dpiX100: 55, peerIrrQ1: 10, peerIrrMedian: 14, peerIrrQ3: 19, peerFeeMedian: 1.0, irrPercentile: 85,
   },
   {
     id: "p7", pipelineRunId: "p7", weekOf: "2026-02-10", fundName: "Blackstone Real Estate Partners X", gpName: "Blackstone",
@@ -93,6 +94,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #92400E 0%, #D97706 60%, #FCD34D 100%)", tagColor: "#D97706", strategyLabel: "Real Estate",
     imageUrl: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 1270, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: 118, dpiX100: 15, peerIrrQ1: 6, peerIrrMedian: 10, peerIrrQ3: 14, peerFeeMedian: 1.5, irrPercentile: 70,
   },
   {
     id: "p8", pipelineRunId: "p8", weekOf: "2026-02-03", fundName: "General Atlantic Growth Fund V", gpName: "General Atlantic",
@@ -101,6 +103,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     bodyHtml: "", heroHtml: "", plainText: "",
     gradient: "linear-gradient(135deg, #1E3A5F 0%, #2563EB 60%, #60A5FA 100%)", tagColor: "#2563EB", strategyLabel: "Growth Equity",
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=600&fit=crop&q=80",
+    irrNetBps: 2430, mgmtFeeBps: 200, carryBps: 2000, hurdleBps: 800, tvpiX100: 155, dpiX100: 30, peerIrrQ1: 10, peerIrrMedian: 15, peerIrrQ3: 21, peerFeeMedian: 2.0, irrPercentile: 88,
   },
 ];
 
