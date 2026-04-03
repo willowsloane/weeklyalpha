@@ -37,6 +37,7 @@ export default function AlphaToolkit() {
   const [selection, setSelection] = useState<SelectionBox | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [frozenFrame, setFrozenFrame] = useState<string | null>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -63,7 +64,7 @@ export default function AlphaToolkit() {
         else if (mode === "chatting") closeChat();
       }
       if (e.key === "Escape") {
-        if (mode === "capturing") setMode("idle");
+        if (mode === "capturing") { setMode("idle"); setFrozenFrame(null); }
         else if (mode === "chatting") closeChat();
       }
     };
@@ -71,12 +72,43 @@ export default function AlphaToolkit() {
     return () => window.removeEventListener("keydown", handler);
   }, [mode]);
 
-  // ── Capture logic ────────────────────────────────────────────────────
+  // ── Capture logic (Screen Capture API — pixel-perfect) ────────────
 
-  const startCapture = useCallback(() => {
-    setMode("capturing");
-    setSelection(null);
-    setIsSelecting(false);
+  const startCapture = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { displaySurface: "browser" } as any,
+        preferCurrentTab: true,
+      } as any);
+
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+      const vw = settings.width || window.innerWidth;
+      const vh = settings.height || window.innerHeight;
+
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      video.muted = true;
+      await video.play();
+      await new Promise((r) => requestAnimationFrame(r));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = vw;
+      canvas.height = vh;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(video, 0, 0, vw, vh);
+
+      track.stop();
+      stream.getTracks().forEach((t) => t.stop());
+      video.srcObject = null;
+
+      setFrozenFrame(canvas.toDataURL("image/png"));
+      setSelection(null);
+      setIsSelecting(false);
+      setMode("capturing");
+    } catch {
+      setMode("chatting");
+    }
   }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -90,8 +122,8 @@ export default function AlphaToolkit() {
     setSelection((prev) => prev ? { ...prev, endX: e.clientX, endY: e.clientY } : null);
   }, [isSelecting, selection]);
 
-  const handleMouseUp = useCallback(async () => {
-    if (!isSelecting || !selection) return;
+  const handleMouseUp = useCallback(() => {
+    if (!isSelecting || !selection || !frozenFrame) return;
     setIsSelecting(false);
 
     const x = Math.min(selection.startX, selection.endX);
@@ -101,50 +133,29 @@ export default function AlphaToolkit() {
 
     if (w < 20 || h < 20) {
       setMode("idle");
+      setFrozenFrame(null);
       return;
     }
 
-    // Hide overlay before capture
-    setMode("idle");
-
-    // Wait for overlay to fully unmount from DOM
-    await new Promise((r) => setTimeout(r, 200));
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-    try {
-      const html2canvas = (await import("html2canvas-pro")).default;
-
-      // Capture the full page, then crop to selection
-      const fullCanvas = await html2canvas(document.documentElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        windowWidth: document.documentElement.scrollWidth,
-        windowHeight: document.documentElement.scrollHeight,
-      });
-
-      // Crop to selection area (account for scroll + device pixel ratio)
-      const scale = 2;
-      const cropX = (x + window.scrollX) * scale;
-      const cropY = (y + window.scrollY) * scale;
-      const cropW = w * scale;
-      const cropH = h * scale;
+    const img = new Image();
+    img.onload = () => {
+      const scaleX = img.naturalWidth / window.innerWidth;
+      const scaleY = img.naturalHeight / window.innerHeight;
 
       const cropCanvas = document.createElement("canvas");
+      const cropW = w * scaleX;
+      const cropH = h * scaleY;
       cropCanvas.width = cropW;
       cropCanvas.height = cropH;
       const ctx = cropCanvas.getContext("2d")!;
-      ctx.drawImage(fullCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+      ctx.drawImage(img, x * scaleX, y * scaleY, cropW, cropH, 0, 0, cropW, cropH);
 
-      const dataUrl = cropCanvas.toDataURL("image/png");
-      setScreenshot(dataUrl);
+      setScreenshot(cropCanvas.toDataURL("image/png"));
+      setFrozenFrame(null);
       setMode("chatting");
-    } catch (err) {
-      console.error("Capture failed:", err);
-      setMode("chatting");
-    }
-  }, [isSelecting, selection]);
+    };
+    img.src = frozenFrame;
+  }, [isSelecting, selection, frozenFrame]);
 
   // ── Chat logic ───────────────────────────────────────────────────────
 
@@ -327,29 +338,28 @@ export default function AlphaToolkit() {
         )}
       </AnimatePresence>
 
-      {/* ── Capture Overlay ── */}
+      {/* ── Capture Overlay (frozen frame from Screen Capture API) ── */}
       <AnimatePresence>
-        {mode === "capturing" && (
+        {mode === "capturing" && frozenFrame && (
           <motion.div
-            ref={overlayRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.12 }}
             className="fixed inset-0 z-[9999]"
             style={{ cursor: "crosshair" }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
           >
-            {/* Dark overlay with cutout */}
-            <div className="absolute inset-0" style={{ background: "rgba(10, 22, 40, 0.4)" }} />
+            {/* Frozen screenshot — pixel-perfect */}
+            <img src={frozenFrame} alt="" className="absolute inset-0 w-full h-full" style={{ objectFit: "cover", pointerEvents: "none" }} draggable={false} />
+            <div className="absolute inset-0" style={{ background: "rgba(10, 22, 40, 0.3)", pointerEvents: "none" }} />
 
-            {/* Instructions */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-3"
+              className="absolute top-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3"
             >
               <div
                 className="px-5 py-2.5 rounded-full text-[13px] font-medium flex items-center gap-2.5"
@@ -361,43 +371,30 @@ export default function AlphaToolkit() {
                   backdropFilter: "blur(12px)",
                 }}
               >
-                <span style={{ color: "#D4AF5C", fontFamily: "Georgia, serif", fontSize: 16 }}>
-                  α
-                </span>
-                Drag to capture an area
+                <span style={{ color: "#D4AF5C", fontFamily: "Georgia, serif", fontSize: 16 }}>α</span>
+                Drag to select an area
                 <span className="opacity-40 ml-1">ESC to cancel</span>
               </div>
             </motion.div>
 
-            {/* Selection rectangle */}
             {selRect && selRect.width > 5 && selRect.height > 5 && (
               <>
-                {/* Clear area (cutout effect via clip-path on the dark overlay won't work easily,
-                    so we draw a bright border around the selection) */}
                 <div
                   className="absolute"
                   style={{
-                    left: selRect.left,
-                    top: selRect.top,
-                    width: selRect.width,
-                    height: selRect.height,
+                    left: selRect.left, top: selRect.top,
+                    width: selRect.width, height: selRect.height,
                     border: "2px solid #D4AF5C",
-                    boxShadow:
-                      "0 0 0 9999px rgba(10, 22, 40, 0.35), inset 0 0 0 1px rgba(212, 175, 92, 0.3)",
-                    background: "rgba(212, 175, 92, 0.04)",
-                    borderRadius: 3,
-                    pointerEvents: "none",
+                    boxShadow: "0 0 0 9999px rgba(10, 22, 40, 0.35), inset 0 0 0 1px rgba(212, 175, 92, 0.3)",
+                    background: "transparent",
+                    borderRadius: 3, pointerEvents: "none",
                   }}
                 />
-                {/* Dimensions badge */}
                 <div
                   className="absolute text-[11px] font-medium px-2 py-1 rounded"
                   style={{
-                    left: selRect.left,
-                    top: selRect.top + selRect.height + 8,
-                    background: "rgba(10, 22, 40, 0.9)",
-                    color: "#D4AF5C",
-                    fontFamily: MONO,
+                    left: selRect.left, top: selRect.top + selRect.height + 8,
+                    background: "rgba(10, 22, 40, 0.9)", color: "#D4AF5C", fontFamily: MONO,
                   }}
                 >
                   {Math.round(selRect.width)} × {Math.round(selRect.height)}
