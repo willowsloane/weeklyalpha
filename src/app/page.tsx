@@ -34,7 +34,7 @@ const PLACEHOLDER_FEATURED: FeaturedIssue = {
 
 const PLACEHOLDER_PAST: FeaturedIssue[] = [
   {
-    id: "p1", pipelineRunId: "p1", weekOf: "2026-03-24", fundName: "Summit Partners Growth Equity VI", gpName: "Summit Partners",
+    id: "p1", pipelineRunId: "p1", weekOf: "2026-03-03", fundName: "Summit Partners Growth Equity VI", gpName: "Summit Partners",
     strategy: "growth_equity", vintageYear: 2023, fundSize: "$2.1B", irrNet: "22.1%", tvpi: "1.60x", dpi: "0.40x", carry: "20%", hurdle: "8%",
     subject: "Summit Partners Growth Equity VI", previewText: "Growth equity vehicle targeting $2B+ with a focus on technology-enabled services.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -43,7 +43,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: 2210, mgmtFeeBps: 200, carryBps: 2000, hurdleBps: 800, tvpiX100: 160, dpiX100: 40, peerIrrQ1: 10, peerIrrMedian: 15, peerIrrQ3: 21, peerFeeMedian: 2.0, irrPercentile: 78,
   },
   {
-    id: "p2", pipelineRunId: "p2", weekOf: "2026-03-17", fundName: "Foundry Group Next Fund II", gpName: "Foundry Group",
+    id: "p2", pipelineRunId: "p2", weekOf: "2026-02-24", fundName: "Foundry Group Next Fund II", gpName: "Foundry Group",
     strategy: "venture", vintageYear: 2024, fundSize: "$750M", irrNet: null, tvpi: null, dpi: null, carry: "25%", hurdle: null,
     subject: "Foundry Group Next Fund II", previewText: "Boulder-based early-stage firm known for thesis-driven investing in infrastructure software.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -52,7 +52,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: null, mgmtFeeBps: 250, carryBps: 2500, hurdleBps: null, tvpiX100: null, dpiX100: null, peerIrrQ1: null, peerIrrMedian: null, peerIrrQ3: null, peerFeeMedian: 2.0, irrPercentile: null,
   },
   {
-    id: "p3", pipelineRunId: "p3", weekOf: "2026-03-10", fundName: "Starwood Opportunity Fund XII", gpName: "Starwood Capital",
+    id: "p3", pipelineRunId: "p3", weekOf: "2026-02-17", fundName: "Starwood Opportunity Fund XII", gpName: "Starwood Capital",
     strategy: "real_estate", vintageYear: 2025, fundSize: "$10B", irrNet: null, tvpi: null, dpi: null, carry: "20%", hurdle: "8%",
     subject: "Starwood Opportunity Fund XII", previewText: "Opportunistic real estate fund focused on distressed assets and value-add properties.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -61,7 +61,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: null, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: null, dpiX100: null, peerIrrQ1: null, peerIrrMedian: null, peerIrrQ3: null, peerFeeMedian: 1.5, irrPercentile: null,
   },
   {
-    id: "p4", pipelineRunId: "p4", weekOf: "2026-03-03", fundName: "Ares Capital Europe V", gpName: "Ares Management",
+    id: "p4", pipelineRunId: "p4", weekOf: "2026-02-10", fundName: "Ares Capital Europe V", gpName: "Ares Management",
     strategy: "private_credit", vintageYear: 2024, fundSize: "$3.5B", irrNet: "14.2%", tvpi: "1.25x", dpi: "0.35x", carry: "20%", hurdle: "6%",
     subject: "Ares Capital Europe V: Direct lending at scale", previewText: "How Ares is navigating rising defaults in European private credit while maintaining top-quartile returns.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -70,7 +70,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: 1420, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 600, tvpiX100: 125, dpiX100: 35, peerIrrQ1: 8, peerIrrMedian: 11.5, peerIrrQ3: 15, peerFeeMedian: 1.75, irrPercentile: 72,
   },
   {
-    id: "p5", pipelineRunId: "p5", weekOf: "2026-02-24", fundName: "Brookfield Infrastructure Fund V", gpName: "Brookfield Asset Management",
+    id: "p5", pipelineRunId: "p5", weekOf: "2026-02-03", fundName: "Brookfield Infrastructure Fund V", gpName: "Brookfield Asset Management",
     strategy: "infrastructure", vintageYear: 2023, fundSize: "$28B", irrNet: "16.8%", tvpi: "1.35x", dpi: "0.20x", carry: "20%", hurdle: "8%",
     subject: "Brookfield Infrastructure V: The data center play", previewText: "With $28B in commitments, Brookfield's latest infrastructure vehicle is betting heavily on AI-driven power demand.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -79,7 +79,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: 1680, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: 135, dpiX100: 20, peerIrrQ1: 9, peerIrrMedian: 13, peerIrrQ3: 17, peerFeeMedian: 1.5, irrPercentile: 80,
   },
   {
-    id: "p6", pipelineRunId: "p6", weekOf: "2026-02-17", fundName: "Lexington Capital Partners IX", gpName: "Lexington Partners",
+    id: "p6", pipelineRunId: "p6", weekOf: "2026-01-27", fundName: "Lexington Capital Partners IX", gpName: "Lexington Partners",
     strategy: "secondaries", vintageYear: 2023, fundSize: "$22.7B", irrNet: "19.5%", tvpi: "1.45x", dpi: "0.55x", carry: "20%", hurdle: "8%",
     subject: "Lexington IX: Record secondaries in a record market", previewText: "The largest secondaries fund ever raised is deploying into a $220B market — but bid-ask spreads remain wide.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -88,7 +88,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: 1950, mgmtFeeBps: 100, carryBps: 2000, hurdleBps: 800, tvpiX100: 145, dpiX100: 55, peerIrrQ1: 10, peerIrrMedian: 14, peerIrrQ3: 19, peerFeeMedian: 1.0, irrPercentile: 85,
   },
   {
-    id: "p7", pipelineRunId: "p7", weekOf: "2026-02-10", fundName: "Blackstone Real Estate Partners X", gpName: "Blackstone",
+    id: "p7", pipelineRunId: "p7", weekOf: "2026-01-20", fundName: "Blackstone Real Estate Partners X", gpName: "Blackstone",
     strategy: "real_estate", vintageYear: 2024, fundSize: "$30.4B", irrNet: "12.7%", tvpi: "1.18x", dpi: "0.15x", carry: "20%", hurdle: "8%",
     subject: "BREP X: From offices to data centers", previewText: "Blackstone's $30B flagship is pivoting from traditional CRE to AI infrastructure. The early returns suggest the bet is paying off.",
     bodyHtml: "", heroHtml: "", plainText: "",
@@ -97,7 +97,7 @@ const PLACEHOLDER_PAST: FeaturedIssue[] = [
     irrNetBps: 1270, mgmtFeeBps: 150, carryBps: 2000, hurdleBps: 800, tvpiX100: 118, dpiX100: 15, peerIrrQ1: 6, peerIrrMedian: 10, peerIrrQ3: 14, peerFeeMedian: 1.5, irrPercentile: 70,
   },
   {
-    id: "p8", pipelineRunId: "p8", weekOf: "2026-02-03", fundName: "General Atlantic Growth Fund V", gpName: "General Atlantic",
+    id: "p8", pipelineRunId: "p8", weekOf: "2026-01-13", fundName: "General Atlantic Growth Fund V", gpName: "General Atlantic",
     strategy: "growth_equity", vintageYear: 2022, fundSize: "$7.8B", irrNet: "24.3%", tvpi: "1.55x", dpi: "0.30x", carry: "20%", hurdle: "8%",
     subject: "GA Growth V: Why growth equity's best vintage might be 2022", previewText: "Deployed at compressed valuations, General Atlantic's 2022 vintage is quietly outperforming its 2021 predecessor by 3x on IRR.",
     bodyHtml: "", heroHtml: "", plainText: "",
