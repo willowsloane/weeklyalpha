@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FadeUp } from "../../components/Animations";
+import { PercentileGauge, PeerComparisonChart } from "../../components/FundCharts";
 import type { FeaturedIssue } from "@/lib/data";
 
 const SERIF = "var(--font-playfair), Georgia, serif";
@@ -120,7 +121,30 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         </FadeUp>
 
-        {/* Charts are now generated inline by the content gen agent based on what data exists */}
+        {/* ── Performance Visuals ── */}
+        {issue.irrPercentile != null && issue.irrNet && (
+          <FadeUp delay={0.25}>
+            <div className="flex flex-wrap justify-center gap-12 py-10 my-8 rounded-[12px]" style={{ background: "#F5F3EF", border: "1px solid #E8E5E0" }}>
+              <PercentileGauge value={issue.irrNet} label="Net IRR" percentile={issue.irrPercentile} />
+              {issue.tvpi && issue.tvpiX100 && <PercentileGauge value={issue.tvpi} label="TVPI" percentile={75} />}
+              {issue.dpi && issue.dpiX100 && <PercentileGauge value={issue.dpi} label="DPI" percentile={60} />}
+            </div>
+          </FadeUp>
+        )}
+
+        {issue.irrNetBps != null && issue.peerIrrMedian != null && (
+          <FadeUp delay={0.3}>
+            <div className="my-8">
+              <PeerComparisonChart
+                fundIrr={issue.irrNetBps / 100}
+                peerQ1={issue.peerIrrQ1}
+                peerMedian={issue.peerIrrMedian}
+                peerQ3={issue.peerIrrQ3}
+                fundLabel={issue.fundName.length > 25 ? issue.fundName.slice(0, 22) + "..." : issue.fundName}
+              />
+            </div>
+          </FadeUp>
+        )}
 
         {/* Body content */}
         <FadeUp delay={0.4}>
