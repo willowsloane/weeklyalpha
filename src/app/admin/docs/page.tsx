@@ -107,13 +107,15 @@ export default function AdminDocsPage() {
                 <PipelineArrow />
                 <PipelineNode label="Curator Agent" time="~2 min" status="03" active />
                 <PipelineArrow />
-                <PipelineNode label="Content Gen" time="~2 min" status="04" active />
+                <PipelineNode label="Enrichment" time="~2 min" status="04" active />
                 <PipelineArrow />
-                <PipelineNode label="Quality Review" time="~1 min" status="05" active />
+                <PipelineNode label="Content Gen" time="~2 min" status="05" active />
                 <PipelineArrow />
-                <PipelineNode label="Human Approval" time="Wed–Sun" status="06" />
+                <PipelineNode label="Quality Review" time="~1 min" status="06" active />
                 <PipelineArrow />
-                <PipelineNode label="Send" time="Monday AM" status="07" />
+                <PipelineNode label="Human Approval" time="Wed–Sun" status="07" />
+                <PipelineArrow />
+                <PipelineNode label="Auto-Publish" time="Monday 8AM" status="08" />
               </div>
             </div>
 
@@ -127,7 +129,7 @@ export default function AdminDocsPage() {
         <FadeUp>
           <div className="mb-20">
             <SectionLabel>Agent Roles</SectionLabel>
-            <SectionTitle>Five agents, one pipeline</SectionTitle>
+            <SectionTitle>Six agents, one pipeline</SectionTitle>
           </div>
         </FadeUp>
 
@@ -164,6 +166,21 @@ export default function AdminDocsPage() {
             },
             {
               id: "03",
+              name: "Research Enrichment",
+              task: "newsletter-research-enrichment",
+              duration: "~2 min",
+              description: "Verifies and enriches the selected fund's data against public web sources before content generation. Searches for GP/fund information via Serper, extracts structured enrichment data via Gemini, and auto-corrects discrepancies (e.g., fund size off by >20%). Adds institutional context that extraction alone can't provide.",
+              inputs: "Pipeline run ID, selected fund metric ID",
+              outputs: "Enriched raw_extraction with verified data, corrections log, research audit trail",
+              sources: [
+                { tier: "Tier 1", name: "Serper Web Search", desc: "8 queries: AUM, HQ, portfolio, ownership, fees, competitors, PitchBook, SEC" },
+                { tier: "Tier 1", name: "Gemini Flash", desc: "Extracts structured data from search snippets" },
+                { tier: "Verify", name: "Cross-reference", desc: "Flags fund size >20% discrepant, missing ownership model, absent portfolio companies" },
+                { tier: "Enrich", name: "New fields", desc: "headquarters, CEO, competitors, portfolio companies, ownership model, ESG policy" },
+              ],
+            },
+            {
+              id: "04",
               name: "Content Generator",
               task: "newsletter-content-gen",
               duration: "~2 min",
@@ -176,7 +193,7 @@ export default function AdminDocsPage() {
               ],
             },
             {
-              id: "04",
+              id: "05",
               name: "Quality Review",
               task: "newsletter-quality-review",
               duration: "~1 min",
@@ -184,13 +201,14 @@ export default function AdminDocsPage() {
               inputs: "Content output, fund metric ID",
               outputs: "Pass/fail, scores, issues, suggested fixes",
               sources: [
+                { tier: "Pass 0", name: "Data Sanity", desc: "Blocks impossible values: fee >5%, carry >50%, IRR >100%, size >$500B (>= 75 to pass)" },
                 { tier: "Pass 1", name: "Fact-check", desc: "Every number verified against fund_metrics (>= 80 to pass)" },
                 { tier: "Pass 2", name: "Anti-vibe", desc: "Banned words, marketing language, missing bear case (>= 90 to pass)" },
                 { tier: "Pass 3", name: "Tone", desc: "Gemini Flash institutional appropriateness score (>= 70 to pass)" },
               ],
             },
             {
-              id: "05",
+              id: "06",
               name: "Supervisor",
               task: "newsletter-supervisor",
               duration: "~10 min total",
@@ -415,6 +433,68 @@ Range: 0.0 — 10.0 per dimension`}</CodeBlock>
                 </ul>
               </Card>
             </div>
+          </div>
+        </FadeUp>
+
+        {/* ── Data Validation Stack ────────────────────────────── */}
+        <FadeUp>
+          <div className="mb-20">
+            <SectionLabel>Data Integrity</SectionLabel>
+            <SectionTitle>Four-layer validation</SectionTitle>
+            <p className="text-[15px] leading-[1.6] max-w-[640px] mb-8" style={{ color: "var(--text-secondary)" }}>
+              Every fund passes through four validation layers before an article is published. This stack was built after discovering extraction errors (77% management fee, wrong fund sizes) that propagated into published content.
+            </p>
+
+            <StaggerCards className="grid md:grid-cols-2 gap-6">
+              {[
+                {
+                  layer: "Layer 1",
+                  title: "Extraction Sanity Caps",
+                  where: "extract-quickstats.ts",
+                  rules: ["Mgmt fee > 5% → auto-corrected (bps misread as %)", "Carry > 50% → nullified", "Values checked at parse time, before DB insert"],
+                  color: "var(--green-deep)",
+                },
+                {
+                  layer: "Layer 2",
+                  title: "Curator Hard Filters",
+                  where: "newsletter-curator.ts",
+                  rules: ["Rejects: fee > 5%, IRR > 100%, strategy 'other', no IRR data", "Only funds with extraction_confidence >= 0.5", "Prevents bad-data funds from being selected"],
+                  color: "var(--green)",
+                },
+                {
+                  layer: "Layer 3",
+                  title: "Research Enrichment",
+                  where: "newsletter-research-enrichment.ts",
+                  rules: ["Verifies fund size against web sources (auto-corrects >20% discrepancy)", "Adds missing data: ownership model, portfolio companies, competitors", "Cross-references key numbers before content gen uses them"],
+                  color: "#2563EB",
+                },
+                {
+                  layer: "Layer 4",
+                  title: "Quality Review Pass 0",
+                  where: "newsletter-quality-review.ts",
+                  rules: ["Blockers: fee > 5%, carry > 50%, IRR > 100%", "Warnings: fund size > $500B, TVPI > 20x, vintage out of range", "Must score >= 75 to pass (in addition to fact-check, anti-vibe, tone)"],
+                  color: "#DC2626",
+                },
+              ].map((layer) => (
+                <StaggerChild key={layer.layer}>
+                  <Card>
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-[11px] font-bold tracking-[0.08em] uppercase px-2 py-1 rounded-[3px]" style={{ background: layer.color + "15", color: layer.color }}>{layer.layer}</span>
+                      <h3 className="text-[16px] font-bold" style={{ color: "var(--text-primary)" }}>{layer.title}</h3>
+                    </div>
+                    <p className="text-[12px] mb-3" style={{ color: "var(--text-muted)", fontFamily: MONO }}>{layer.where}</p>
+                    <ul className="space-y-1.5">
+                      {layer.rules.map((rule) => (
+                        <li key={rule} className="text-[13px] flex items-start gap-2" style={{ color: "var(--text-body)" }}>
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: layer.color }} />
+                          {rule}
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                </StaggerChild>
+              ))}
+            </StaggerCards>
           </div>
         </FadeUp>
 
