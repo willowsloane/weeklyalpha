@@ -38,6 +38,7 @@ export default function AlphaToolkit() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [frozenFrame, setFrozenFrame] = useState<string | null>(null);
+  const [capturedRegionContext, setCapturedRegionContext] = useState<string>("");
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -137,6 +138,10 @@ export default function AlphaToolkit() {
       return;
     }
 
+    // Identify DOM elements inside the selection
+    const regionContext = getElementsInRegion(x, y, w, h);
+    setCapturedRegionContext(regionContext);
+
     const img = new Image();
     img.onload = () => {
       const scaleX = img.naturalWidth / window.innerWidth;
@@ -185,6 +190,7 @@ export default function AlphaToolkit() {
 
     // Clear screenshot after first use
     if (screenshot) setScreenshot(null);
+    if (capturedRegionContext) setCapturedRegionContext("");
 
     const assistantId = (Date.now() + 1).toString();
     setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: "" }]);
@@ -202,6 +208,7 @@ export default function AlphaToolkit() {
           currentPath: window.location.pathname,
           pageTitle: document.title,
           pageText: getVisiblePageContext(),
+          capturedRegionContext: capturedRegionContext || undefined,
         }),
       });
 
@@ -706,6 +713,66 @@ export default function AlphaToolkit() {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────
+
+function getElementsInRegion(selX: number, selY: number, selW: number, selH: number): string {
+  const selRight = selX + selW;
+  const selBottom = selY + selH;
+
+  const parts: string[] = [];
+  const seen = new Set<string>();
+
+  const selectors = "h1, h2, h3, h4, p, span, td, th, li, strong, b, code, article, section, figcaption, [class*='card'], [class*='Card'], [class*='metric'], [class*='fund'], [class*='Fund'], [class*='issue'], [class*='Issue']";
+  const elements = document.querySelectorAll(selectors);
+
+  elements.forEach((el) => {
+    const rect = (el as HTMLElement).getBoundingClientRect();
+    const overlaps = rect.left < selRight && rect.right > selX && rect.top < selBottom && rect.bottom > selY;
+    if (!overlaps) return;
+
+    const text = (el as HTMLElement).innerText?.trim().replace(/\s+/g, " ");
+    if (!text || text.length < 2 || text.length > 500) return;
+
+    const key = text.slice(0, 100);
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    const tag = el.tagName.toLowerCase();
+    const className = (el as HTMLElement).className || "";
+    let label = tag;
+    if (/card|Card/.test(className)) label = "CARD";
+    else if (/issue|Issue/.test(className)) label = "ISSUE";
+    else if (/fund|Fund/.test(className)) label = "FUND";
+    else if (/metric|Metric/.test(className)) label = "METRIC";
+    else if (tag === "h1" || tag === "h2" || tag === "h3") label = tag.toUpperCase();
+    else if (tag === "strong" || tag === "b") label = "BOLD";
+    else if (tag === "article") label = "ARTICLE";
+
+    parts.push(`[${label}] ${text}`);
+  });
+
+  if (parts.length === 0) return "";
+
+  const centerX = selX + selW / 2;
+  const centerY = selY + selH / 2;
+  const centerEl = document.elementFromPoint(centerX, centerY);
+  if (centerEl) {
+    let parent: HTMLElement | null = centerEl as HTMLElement;
+    for (let i = 0; i < 10 && parent; i++) {
+      const cls = parent.className || "";
+      const tag = parent.tagName?.toLowerCase();
+      if (/card|Card|issue|Issue|article|section/.test(cls) || tag === "article" || tag === "section") {
+        const parentText = parent.innerText?.trim().replace(/\s+/g, " ").slice(0, 600);
+        if (parentText && parentText.length > 20) {
+          parts.unshift(`[PARENT CONTAINER] ${parentText}`);
+        }
+        break;
+      }
+      parent = parent.parentElement;
+    }
+  }
+
+  return parts.slice(0, 30).join("\n");
+}
 
 function getVisiblePageContext(): string {
   // Grab key page signals: headings, fund names, metrics, article content

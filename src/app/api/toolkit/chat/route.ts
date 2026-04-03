@@ -167,11 +167,12 @@ async function identifyArticleFromContext(pageText: string, pageTitle: string): 
 }
 
 export async function POST(req: Request) {
-  const { messages, currentPath, pageTitle, pageText } = (await req.json()) as {
+  const { messages, currentPath, pageTitle, pageText, capturedRegionContext } = (await req.json()) as {
     messages: ChatMessage[];
     currentPath?: string;
     pageTitle?: string;
     pageText?: string;
+    capturedRegionContext?: string;
   };
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -202,6 +203,7 @@ You have deep expertise in private markets: PE, VC, real estate, credit, infrast
 CURRENT CONTEXT:
 - The user is viewing: ${locationContext} (${currentPath || "/"})
 - Page title: ${pageTitle || "n/a"}
+${capturedRegionContext ? `\n=== CAPTURED REGION (the EXACT elements inside the user's screenshot selection) ===\n${capturedRegionContext}\n=== END CAPTURED REGION ===\nIMPORTANT: The captured region tells you EXACTLY which article, fund, or section the user selected. Use this to identify the specific content they're asking about.\n` : ""}
 ${pageText ? `- Visible page elements:\n${pageText.slice(0, 1000)}` : ""}
 ${articleContext}
 
