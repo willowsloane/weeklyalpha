@@ -10,47 +10,41 @@ import { FundHeroImage } from "@/app/components/FundHeroImage";
 const SERIF = "var(--font-playfair), Georgia, serif";
 const MONO = "var(--font-mono), 'IBM Plex Mono', monospace";
 
-/* ── Extract Bull & Bear from bodyHtml ── */
-function extractBullBear(html: string): { bull: string; bear: string; bodyWithout: string } {
-  // Try to find bull/bear section and extract it
-  const bullBearPatterns = [
-    // h2 "Bull and Bear" or "Bull & Bear" followed by content until next h2 or end
-    /(<h2[^>]*>Bull\s*(?:and|&amp;|&)\s*Bear<\/h2>)([\s\S]*?)(?=<h2|$)/i,
-  ];
+/* ── Extract sections from bodyHtml for custom rendering ── */
+function extractSections(html: string): { bull: string; bear: string; keyStatHtml: string; bodyWithout: string } {
+  let bodyWithout = html;
+  let bull = "", bear = "", keyStatHtml = "";
 
-  let bull = "", bear = "", bodyWithout = html;
+  // Extract "The Number" / Key Market Stat card (already styled by regen script)
+  const keyStatMatch = bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>/i)
+    || bodyWithout.match(/<div[^>]*background:#F5F3EF[\s\S]*?Key Market Stat[\s\S]*?<\/div>/i);
+  if (keyStatMatch) {
+    keyStatHtml = keyStatMatch[0];
+    bodyWithout = bodyWithout.replace(keyStatMatch[0], "");
+    // Also remove the h2 "The Number" if still present
+    bodyWithout = bodyWithout.replace(/<h2[^>]*>The Number<\/h2>/i, "");
+  }
 
-  for (const pattern of bullBearPatterns) {
-    const match = html.match(pattern);
-    if (match) {
-      const section = match[0];
-      bodyWithout = html.replace(section, "");
+  // Extract Bull & Bear section
+  const bbMatch = bodyWithout.match(/(<h2[^>]*>Bull\s*(?:and|&amp;|&)\s*Bear<\/h2>)([\s\S]*?)(?=<h2|<div[^>]*border-top|$)/i);
+  if (bbMatch) {
+    const section = bbMatch[0];
+    bodyWithout = bodyWithout.replace(section, "");
 
-      // Extract bull and bear content
-      const bullMatch = section.match(/bull\s*case[^<]*<\/(?:p|strong)>\s*([\s\S]*?)(?=bear\s*case|$)/i)
-        || section.match(/<strong>Bull\s*Case<\/strong>\s*([\s\S]*?)(?=<strong>Bear|<p[^>]*><strong>Bear|$)/i)
-        || section.match(/Bull\s*Case\s*<\/h3>\s*([\s\S]*?)(?=Bear|$)/i);
-      const bearMatch = section.match(/bear\s*case[^<]*<\/(?:p|strong)>\s*([\s\S]*?)$/i)
-        || section.match(/<strong>Bear\s*Case<\/strong>\s*([\s\S]*?)$/i)
-        || section.match(/Bear\s*Case\s*<\/h3>\s*([\s\S]*?)$/i);
-
-      if (bullMatch) bull = bullMatch[1]?.replace(/<\/?[^>]+(>|$)/g, "").trim() || "";
-      if (bearMatch) bear = bearMatch[1]?.replace(/<\/?[^>]+(>|$)/g, "").trim() || "";
-
-      // Fallback: split on "Bear Case" if regex didn't catch it
-      if (!bull && !bear) {
-        const text = section.replace(/<\/?[^>]+(>|$)/g, "").replace(/Bull\s*(?:and|&)\s*Bear/i, "");
-        const parts = text.split(/Bear\s*Case/i);
-        if (parts.length >= 2) {
-          bull = parts[0].replace(/Bull\s*Case/i, "").trim();
-          bear = parts[1].trim();
-        }
-      }
-      break;
+    // Split on Bull Case / Bear Case
+    const text = section.replace(/<\/?[^>]+(>|$)/g, "");
+    const cleanText = text.replace(/Bull\s*(?:and|&)\s*Bear/i, "");
+    const parts = cleanText.split(/Bear\s*Case/i);
+    if (parts.length >= 2) {
+      bull = parts[0].replace(/Bull\s*Case/i, "").trim();
+      bear = parts[1].trim();
     }
   }
 
-  return { bull, bear, bodyWithout };
+  // Clean up empty paragraphs left behind
+  bodyWithout = bodyWithout.replace(/<p[^>]*>\s*<\/p>/g, "");
+
+  return { bull, bear, keyStatHtml, bodyWithout };
 }
 
 /* ── Distribution strip ── */
@@ -161,8 +155,8 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
 
   const accent = issue.irrPercentile != null ? pctColor(issue.irrPercentile) : C.accent;
 
-  // Extract bull/bear from body to render separately at top
-  const { bull, bear, bodyWithout } = useMemo(() => extractBullBear(issue.bodyHtml || ""), [issue.bodyHtml]);
+  // Extract sections from body for custom rendering
+  const { bull, bear, keyStatHtml, bodyWithout } = useMemo(() => extractSections(issue.bodyHtml || ""), [issue.bodyHtml]);
 
   return (
     <div className="min-h-screen" style={{ background: C.bg }}>
@@ -270,7 +264,12 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         </div>
 
-        {/* ══════ BULL & BEAR — RIGHT AFTER PERFORMANCE CARD ══════ */}
+        {/* ══════ KEY MARKET STAT CARD ══════ */}
+        {keyStatHtml && (
+          <div className="mb-10" dangerouslySetInnerHTML={{ __html: keyStatHtml }} />
+        )}
+
+        {/* ══════ BULL & BEAR ══════ */}
         {(bull || bear) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
             {bull && (
