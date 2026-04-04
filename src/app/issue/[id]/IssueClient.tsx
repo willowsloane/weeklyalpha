@@ -140,8 +140,7 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
 
   const accent = issue.irrPercentile != null ? pctColor(issue.irrPercentile) : C.accent;
 
-  // Extract styled blocks from body HTML; bull/bear come from structured data
-  const { keyStatHtml, marketInsightHtml, bottomLineHtml, bodyWithout } = useMemo(() => extractStyledBlocks(issue.bodyHtml || ""), [issue.bodyHtml]);
+  // Bull/bear from structured data; bodyHtml rendered as-is (no extraction needed)
   const bull = issue.bullCase || "";
   const bear = issue.bearCase || "";
 
@@ -251,11 +250,6 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         </div>
 
-        {/* ══════ KEY MARKET STAT CARD ══════ */}
-        {keyStatHtml && (
-          <div className="mb-10" dangerouslySetInnerHTML={{ __html: keyStatHtml }} />
-        )}
-
         {/* ══════ BULL & BEAR ══════ */}
         {(bull || bear) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
@@ -280,22 +274,12 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         )}
 
-        {/* ══════ ARTICLE BODY (Story + Market Context + At a Glance) ══════ */}
-        {bodyWithout && (
-          <div className="max-w-[640px] mx-auto mb-6"
+        {/* ══════ ARTICLE BODY (Story → Market Context → At a Glance → Market Insight → Bottom Line) ══════ */}
+        {issue.bodyHtml && (
+          <div className="max-w-[640px] mx-auto mb-16"
             style={{ color: C.body, fontSize: "17px", lineHeight: "1.8", letterSpacing: "-0.003em" }}
-            dangerouslySetInnerHTML={{ __html: bodyWithout }}
+            dangerouslySetInnerHTML={{ __html: issue.bodyHtml }}
           />
-        )}
-
-        {/* ══════ MARKET INSIGHT VISUAL CARD ══════ */}
-        {marketInsightHtml && (
-          <div className="max-w-[640px] mx-auto mb-16" dangerouslySetInnerHTML={{ __html: marketInsightHtml }} />
-        )}
-
-        {/* ══════ BOTTOM LINE ══════ */}
-        {bottomLineHtml && (
-          <div className="max-w-[640px] mx-auto mb-16" dangerouslySetInnerHTML={{ __html: bottomLineHtml }} />
         )}
 
         {/* ══════ SUBMIT CTA ══��═══ */}
