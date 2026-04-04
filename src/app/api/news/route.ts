@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const SERPER_KEY = () => process.env.NEXT_PUBLIC_SERPER_API_KEY || process.env.SERPER_API_KEY || "";
+const SEARCHAPI_KEY = () => process.env.SEARCHAPI_API_KEY || "";
 
 const NEWS_QUERIES = [
   "private equity fund 2026",
@@ -15,9 +15,9 @@ const NEWS_QUERIES = [
 ];
 
 export async function GET() {
-  const key = SERPER_KEY();
+  const key = SEARCHAPI_KEY();
   if (!key) {
-    return NextResponse.json({ articles: [], error: "No SERPER_API_KEY" });
+    return NextResponse.json({ articles: [], error: "No SEARCHAPI_API_KEY" });
   }
 
   const allArticles: any[] = [];
@@ -27,21 +27,23 @@ export async function GET() {
 
   for (const query of shuffled) {
     try {
-      const res = await fetch("https://google.serper.dev/news", {
-        method: "POST",
-        headers: { "X-API-KEY": key, "Content-Type": "application/json" },
-        body: JSON.stringify({ q: query, num: 5 }),
-      });
+      const url = new URL("https://www.searchapi.io/api/v1/search");
+      url.searchParams.set("engine", "google_news");
+      url.searchParams.set("q", query);
+      url.searchParams.set("num", "5");
+      url.searchParams.set("api_key", key);
+
+      const res = await fetch(url.toString());
       if (res.ok) {
         const data = await res.json();
-        for (const item of data.news || []) {
+        for (const item of data.news_results || []) {
           allArticles.push({
             title: item.title || "",
             snippet: item.snippet || "",
-            source: item.source || "",
+            source: item.source?.name || item.source || "",
             date: item.date || "",
             link: item.link || "",
-            imageUrl: item.imageUrl || null,
+            imageUrl: item.thumbnail || null,
           });
         }
       }
@@ -52,13 +54,12 @@ export async function GET() {
   // Dedupe by title, prefer ones with images, take top 8
   const seen = new Set<string>();
   const unique = allArticles.filter((a) => {
-    const key = a.title.toLowerCase().slice(0, 50);
-    if (seen.has(key)) return false;
-    seen.add(key);
+    const k = a.title.toLowerCase().slice(0, 50);
+    if (seen.has(k)) return false;
+    seen.add(k);
     return true;
   });
 
-  // Sort: ones with images first, then by date
   unique.sort((a, b) => {
     if (a.imageUrl && !b.imageUrl) return -1;
     if (!a.imageUrl && b.imageUrl) return 1;
