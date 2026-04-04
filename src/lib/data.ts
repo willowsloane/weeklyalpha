@@ -90,6 +90,8 @@ export interface FeaturedIssue {
   peerCount: number;
   irrPercentile: number | null;
   dataAsOf: string | null;
+  bullCase: string | null;
+  bearCase: string | null;
 }
 
 export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
@@ -200,6 +202,8 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         peerCount: peerIrrs.length,
         irrPercentile,
         dataAsOf: fund.data_as_of ?? null,
+        bullCase: content.bullCase || null,
+        bearCase: content.bearCase || null,
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
