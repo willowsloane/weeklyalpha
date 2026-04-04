@@ -53,7 +53,7 @@ function extractSections(html: string): { bull: string; bear: string; keyStatHtm
   // Clean up empty paragraphs left behind
   bodyWithout = bodyWithout.replace(/<p[^>]*>\s*<\/p>/g, "");
 
-  return { bull, bear, keyStatHtml, bodyWithout };
+  return { bull, bear, keyStatHtml, marketInsightHtml, bodyWithout };
 }
 
 /* ── Distribution strip ── */
