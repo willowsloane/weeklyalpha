@@ -258,8 +258,8 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
             </div>
           )}
 
-          {/* Metrics grid */}
-          {stripMetrics.length > 0 && (
+          {/* Metrics grid — collapse to inline when sparse */}
+          {stripMetrics.length >= 3 && (
             <div className="grid" style={{ gridTemplateColumns: `repeat(${Math.min(stripMetrics.length, 6)}, 1fr)`, borderBottom: `1px solid ${C.border}` }}>
               {stripMetrics.map((m, i) => (
                 <div key={m.label} className="py-6 px-3 text-center" style={{ borderRight: i < stripMetrics.length - 1 ? `1px solid ${C.border}` : "none" }}>
@@ -269,28 +269,40 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
               ))}
             </div>
           )}
+          {stripMetrics.length > 0 && stripMetrics.length < 3 && (
+            <div className="flex items-center justify-center gap-6 py-5" style={{ borderBottom: `1px solid ${C.border}` }}>
+              {stripMetrics.map((m) => (
+                <span key={m.label} className="text-[13px]" style={{ color: C.secondary }}>
+                  <span className="font-medium">{m.label}: </span>
+                  <span className="font-bold tabular-nums" style={{ fontFamily: MONO, color: C.primary }}>{m.value}</span>
+                </span>
+              ))}
+            </div>
+          )}
 
-          {/* Peer visualization: distribution strip or fallback bars */}
+          {/* Peer visualization: distribution strip (5+ peers) → bar chart (5+ peers, no quartiles) → inline note (<5 peers) */}
           {hasDistribution ? (
             <DistributionStrip issue={issue} />
-          ) : (
-            issue.irrNetBps != null && issue.peerIrrMedian != null && (
-              <div className="px-7 py-8">
-                <div className="flex items-center justify-between mb-5">
-                  <p className="text-[11px] font-semibold tracking-[0.08em] uppercase" style={{ color: C.subtle }}>
-                    IRR vs {issue.strategyLabel} Peers
-                  </p>
-                  {issue.peerCount > 0 && (
-                    <p className="text-[11px] font-medium" style={{ color: C.muted }}>{issue.peerCount} peers</p>
-                  )}
-                </div>
-                <Bar label={issue.fundName} value={issue.irrNetBps / 100} maxValue={peerMax} displayValue={(issue.irrNetBps / 100).toFixed(1) + "%"} color={accent} delay={0} />
-                {issue.peerIrrQ3 && <Bar label="Top Quartile" value={issue.peerIrrQ3} maxValue={peerMax} displayValue={issue.peerIrrQ3.toFixed(1) + "%"} color={C.peerBar} delay={0.08} />}
-                {issue.peerIrrMedian && <Bar label="Median" value={issue.peerIrrMedian} maxValue={peerMax} displayValue={issue.peerIrrMedian.toFixed(1) + "%"} color={C.peerBarLight} delay={0.16} />}
-                {issue.peerIrrQ1 && <Bar label="Bottom Quartile" value={issue.peerIrrQ1} maxValue={peerMax} displayValue={issue.peerIrrQ1.toFixed(1) + "%"} color={C.border} delay={0.24} />}
+          ) : issue.irrNetBps != null && issue.peerIrrMedian != null && issue.peerCount >= 5 ? (
+            <div className="px-7 py-8">
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-[11px] font-semibold tracking-[0.08em] uppercase" style={{ color: C.subtle }}>
+                  IRR vs {issue.strategyLabel} Peers
+                </p>
+                <p className="text-[11px] font-medium" style={{ color: C.muted }}>{issue.peerCount} peers</p>
               </div>
-            )
-          )}
+              <Bar label={issue.fundName} value={issue.irrNetBps / 100} maxValue={peerMax} displayValue={(issue.irrNetBps / 100).toFixed(1) + "%"} color={accent} delay={0} />
+              {issue.peerIrrQ3 && <Bar label="Top Quartile" value={issue.peerIrrQ3} maxValue={peerMax} displayValue={issue.peerIrrQ3.toFixed(1) + "%"} color={C.peerBar} delay={0.08} />}
+              {issue.peerIrrMedian && <Bar label="Median" value={issue.peerIrrMedian} maxValue={peerMax} displayValue={issue.peerIrrMedian.toFixed(1) + "%"} color={C.peerBarLight} delay={0.16} />}
+              {issue.peerIrrQ1 && <Bar label="Bottom Quartile" value={issue.peerIrrQ1} maxValue={peerMax} displayValue={issue.peerIrrQ1.toFixed(1) + "%"} color={C.border} delay={0.24} />}
+            </div>
+          ) : issue.peerCount > 0 && issue.peerCount < 5 ? (
+            <div className="px-7 py-6">
+              <p className="text-[12px]" style={{ color: C.muted }}>
+                Limited peer data — only {issue.peerCount} comparable {issue.strategyLabel.toLowerCase()} fund{issue.peerCount === 1 ? "" : "s"} in our database for this vintage window. Peer benchmarking requires 5+ funds for meaningful comparison.
+              </p>
+            </div>
+          ) : null}
 
           {/* Methodology footnote */}
           <div className="px-7 pb-5">
