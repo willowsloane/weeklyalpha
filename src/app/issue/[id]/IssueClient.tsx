@@ -11,18 +11,27 @@ const SERIF = "var(--font-playfair), Georgia, serif";
 const MONO = "var(--font-mono), 'IBM Plex Mono', monospace";
 
 /* ── Extract sections from bodyHtml for custom rendering ── */
-function extractSections(html: string): { bull: string; bear: string; keyStatHtml: string; bodyWithout: string } {
+function extractSections(html: string): { bull: string; bear: string; keyStatHtml: string; marketInsightHtml: string; bodyWithout: string } {
   let bodyWithout = html;
-  let bull = "", bear = "", keyStatHtml = "";
+  let bull = "", bear = "", keyStatHtml = "", marketInsightHtml = "";
 
   // Extract "The Number" / Key Market Stat card (already styled by regen script)
-  const keyStatMatch = bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>/i)
+  const keyStatMatch = bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i)
+    || bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>/i)
     || bodyWithout.match(/<div[^>]*background:#F5F3EF[\s\S]*?Key Market Stat[\s\S]*?<\/div>/i);
   if (keyStatMatch) {
     keyStatHtml = keyStatMatch[0];
     bodyWithout = bodyWithout.replace(keyStatMatch[0], "");
-    // Also remove the h2 "The Number" if still present
     bodyWithout = bodyWithout.replace(/<h2[^>]*>The Number<\/h2>/i, "");
+  }
+
+  // Extract "Market Insight" visual card (already styled by regen script)
+  const insightMatch = bodyWithout.match(/<div[^>]*>[\s\S]*?Market Insight[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i)
+    || bodyWithout.match(/<div[^>]*gradient[\s\S]*?Market Insight[\s\S]*?<\/div>\s*<\/div>/i);
+  if (insightMatch) {
+    marketInsightHtml = insightMatch[0];
+    bodyWithout = bodyWithout.replace(insightMatch[0], "");
+    bodyWithout = bodyWithout.replace(/<h2[^>]*>Market Insight<\/h2>/i, "");
   }
 
   // Extract Bull & Bear section
@@ -156,7 +165,7 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
   const accent = issue.irrPercentile != null ? pctColor(issue.irrPercentile) : C.accent;
 
   // Extract sections from body for custom rendering
-  const { bull, bear, keyStatHtml, bodyWithout } = useMemo(() => extractSections(issue.bodyHtml || ""), [issue.bodyHtml]);
+  const { bull, bear, keyStatHtml, marketInsightHtml, bodyWithout } = useMemo(() => extractSections(issue.bodyHtml || ""), [issue.bodyHtml]);
 
   return (
     <div className="min-h-screen" style={{ background: C.bg }}>
@@ -295,10 +304,15 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
 
         {/* ══════ ARTICLE BODY (Story + Market Context + At a Glance) ══════ */}
         {bodyWithout && (
-          <div className="max-w-[640px] mx-auto mb-16"
+          <div className="max-w-[640px] mx-auto mb-6"
             style={{ color: C.body, fontSize: "17px", lineHeight: "1.8", letterSpacing: "-0.003em" }}
             dangerouslySetInnerHTML={{ __html: bodyWithout }}
           />
+        )}
+
+        {/* ══════ MARKET INSIGHT VISUAL CARD ══════ */}
+        {marketInsightHtml && (
+          <div className="max-w-[640px] mx-auto mb-16" dangerouslySetInnerHTML={{ __html: marketInsightHtml }} />
         )}
 
         {/* ══════ SUBMIT CTA ══════ */}
