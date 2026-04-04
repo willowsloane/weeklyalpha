@@ -11,49 +11,55 @@ const SERIF = "var(--font-playfair), Georgia, serif";
 const MONO = "var(--font-mono), 'IBM Plex Mono', monospace";
 
 /* ── Extract sections from bodyHtml for custom rendering ── */
-function extractSections(html: string): { bull: string; bear: string; keyStatHtml: string; marketInsightHtml: string; bodyWithout: string } {
-  let bodyWithout = html;
-  let bull = "", bear = "", keyStatHtml = "", marketInsightHtml = "";
+interface ExtractedSections { bull: string; bear: string; keyStatHtml: string; marketInsightHtml: string; bottomLineHtml: string; bodyWithout: string }
 
-  // Extract "The Number" / Key Market Stat card (already styled by regen script)
-  const keyStatMatch = bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i)
-    || bodyWithout.match(/<div[^>]*Key Market Stat[\s\S]*?<\/div>\s*<\/div>/i)
-    || bodyWithout.match(/<div[^>]*background:#F5F3EF[\s\S]*?Key Market Stat[\s\S]*?<\/div>/i);
-  if (keyStatMatch) {
-    keyStatHtml = keyStatMatch[0];
-    bodyWithout = bodyWithout.replace(keyStatMatch[0], "");
-    bodyWithout = bodyWithout.replace(/<h2[^>]*>The Number<\/h2>/i, "");
+function extractSections(html: string): ExtractedSections {
+  let bw = html;
+  let bull = "", bear = "", keyStatHtml = "", marketInsightHtml = "", bottomLineHtml = "";
+
+  // Helper: extract a styled div block by text content
+  function extractBlock(text: string, h: string): string {
+    // Match styled divs containing the text
+    const patterns = [
+      new RegExp(`<div[^>]*>[\\s\\S]*?${text}[\\s\\S]*?<\\/div>\\s*<\\/div>\\s*<\\/div>`, "i"),
+      new RegExp(`<div[^>]*>[\\s\\S]*?${text}[\\s\\S]*?<\\/div>\\s*<\\/div>`, "i"),
+      new RegExp(`<div[^>]*>${text}[\\s\\S]*?<\\/div>`, "i"),
+    ];
+    for (const p of patterns) {
+      const m = bw.match(p);
+      if (m) { bw = bw.replace(m[0], ""); return m[0]; }
+    }
+    // Also remove any leftover h2
+    bw = bw.replace(new RegExp(`<h2[^>]*>${h}<\\/h2>`, "i"), "");
+    return "";
   }
 
-  // Extract "Market Insight" visual card (already styled by regen script)
-  const insightMatch = bodyWithout.match(/<div[^>]*>[\s\S]*?Market Insight[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i)
-    || bodyWithout.match(/<div[^>]*gradient[\s\S]*?Market Insight[\s\S]*?<\/div>\s*<\/div>/i);
-  if (insightMatch) {
-    marketInsightHtml = insightMatch[0];
-    bodyWithout = bodyWithout.replace(insightMatch[0], "");
-    bodyWithout = bodyWithout.replace(/<h2[^>]*>Market Insight<\/h2>/i, "");
-  }
+  // Extract Key Market Stat
+  keyStatHtml = extractBlock("Key Market Stat", "The Number");
 
-  // Extract Bull & Bear section
-  const bbMatch = bodyWithout.match(/(<h2[^>]*>Bull\s*(?:and|&amp;|&)\s*Bear<\/h2>)([\s\S]*?)(?=<h2|<div[^>]*border-top|$)/i);
+  // Extract Bottom Line (styled with border-top:3px)
+  const blMatch = bw.match(/<div[^>]*border-top:3px[^>]*>[\s\S]*?<\/div>/i);
+  if (blMatch) { bottomLineHtml = blMatch[0]; bw = bw.replace(blMatch[0], ""); }
+
+  // Extract Market Insight (styled with linear-gradient)
+  const miMatch = bw.match(/<div[^>]*margin:48px[^>]*>[\s\S]*?Market Insight[\s\S]*?(?:<\/div>\s*){2,4}/i);
+  if (miMatch) { marketInsightHtml = miMatch[0]; bw = bw.replace(miMatch[0], ""); }
+  bw = bw.replace(/<h2[^>]*>Market Insight<\/h2>/i, "");
+
+  // Extract Bull & Bear
+  const bbMatch = bw.match(/(<h2[^>]*>Bull\s*(?:and|&amp;|&)\s*Bear<\/h2>)([\s\S]*?)(?=<h2|<div[^>]*border-top|$)/i);
   if (bbMatch) {
-    const section = bbMatch[0];
-    bodyWithout = bodyWithout.replace(section, "");
-
-    // Split on Bull Case / Bear Case
-    const text = section.replace(/<\/?[^>]+(>|$)/g, "");
-    const cleanText = text.replace(/Bull\s*(?:and|&)\s*Bear/i, "");
-    const parts = cleanText.split(/Bear\s*Case/i);
+    bw = bw.replace(bbMatch[0], "");
+    const text = bbMatch[0].replace(/<\/?[^>]+(>|$)/g, "").replace(/Bull\s*(?:and|&)\s*Bear/i, "");
+    const parts = text.split(/Bear\s*Case/i);
     if (parts.length >= 2) {
       bull = parts[0].replace(/Bull\s*Case/i, "").trim();
       bear = parts[1].trim();
     }
   }
 
-  // Clean up empty paragraphs left behind
-  bodyWithout = bodyWithout.replace(/<p[^>]*>\s*<\/p>/g, "");
-
-  return { bull, bear, keyStatHtml, marketInsightHtml, bodyWithout };
+  bw = bw.replace(/<p[^>]*>\s*<\/p>/g, "");
+  return { bull, bear, keyStatHtml, marketInsightHtml, bottomLineHtml, bodyWithout: bw };
 }
 
 /* ── Distribution strip ── */
@@ -165,7 +171,7 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
   const accent = issue.irrPercentile != null ? pctColor(issue.irrPercentile) : C.accent;
 
   // Extract sections from body for custom rendering
-  const { bull, bear, keyStatHtml, marketInsightHtml, bodyWithout } = useMemo(() => extractSections(issue.bodyHtml || ""), [issue.bodyHtml]);
+  const { bull, bear, keyStatHtml, marketInsightHtml, bottomLineHtml, bodyWithout } = useMemo(() => extractSections(issue.bodyHtml || ""), [issue.bodyHtml]);
 
   return (
     <div className="min-h-screen" style={{ background: C.bg }}>
@@ -315,7 +321,12 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           <div className="max-w-[640px] mx-auto mb-16" dangerouslySetInnerHTML={{ __html: marketInsightHtml }} />
         )}
 
-        {/* ══════ SUBMIT CTA ══════ */}
+        {/* ══════ BOTTOM LINE ══════ */}
+        {bottomLineHtml && (
+          <div className="max-w-[640px] mx-auto mb-16" dangerouslySetInnerHTML={{ __html: bottomLineHtml }} />
+        )}
+
+        {/* ══════ SUBMIT CTA ══��═══ */}
         <div className="rounded-[8px] overflow-hidden mb-16 flex" style={{ border: `1px solid ${C.border}`, background: C.surface }}>
           <div className="w-1.5 shrink-0" style={{ background: C.accent }} />
           <div className="p-8 md:p-10">
