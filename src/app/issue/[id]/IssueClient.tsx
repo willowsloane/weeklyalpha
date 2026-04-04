@@ -335,6 +335,8 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
         article h2:first-child { margin-top: 0; }
         article p { margin: 0 0 18px; }
         article strong { color: ${C.accent}; font-weight: 700; }
+        article a { color: ${C.accent}; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: ${C.border}; }
+        article a:hover { text-decoration-color: ${C.accent}; }
         article ul { list-style: none; padding: 0; margin: 0 0 24px; }
         article li { font-size: 15px; line-height: 1.7; padding: 10px 0 10px 16px; border-bottom: 1px solid ${C.borderLight}; position: relative; }
         article li::before { content: ""; position: absolute; left: 0; top: 16px; width: 4px; height: 4px; border-radius: 50%; background: ${C.accent}; }
