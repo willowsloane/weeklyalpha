@@ -21,7 +21,6 @@
 @theme inline {
   --color-background: var(--white);
   --color-foreground: var(--text-primary);
-  --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
 }
 
