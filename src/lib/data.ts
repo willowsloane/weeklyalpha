@@ -109,11 +109,12 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
 
   // Get fund metrics for each run
   const fundIds = runs.map((r: any) => r.selected_fund_metric_id).filter(Boolean);
-  const { data: funds } = await supabase
+  const { data: funds, error: fundsError } = await supabase
     .from("fund_metrics")
-    .select("id, fund_name, gp_name, strategy, vintage_year, fund_size_usd, irr_net_bps, tvpi_x100, dpi_x100, carry_bps, hurdle_bps, mgmt_fee_bps, data_as_of")
+    .select("id, fund_name, gp_name, strategy, vintage_year, fund_size_usd, irr_net_bps, tvpi_x100, dpi_x100, carry_bps, hurdle_bps, mgmt_fee_bps")
     .in("id", fundIds);
 
+  if (fundsError) console.error("[getFeaturedIssues] fund_metrics query failed:", fundsError.message);
   const fundMap = new Map((funds || []).map((f: any) => [f.id, f]));
 
   // Fetch peer data for all strategies/vintages in one go
@@ -198,7 +199,7 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         peerFeeMedian: peerFees.length > 0 ? peerFees[Math.floor(peerFees.length / 2)] / 100 : null,
         peerCount: peerIrrs.length,
         irrPercentile,
-        dataAsOf: fund.data_as_of || null,
+        dataAsOf: fund.data_as_of ?? null,
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
