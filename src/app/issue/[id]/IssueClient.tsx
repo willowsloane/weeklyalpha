@@ -157,9 +157,29 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* Hero — real chart image if available, otherwise generated */}
       <div className="max-w-[900px] mx-auto px-6 pt-10">
-        <FundHeroImage strategy={issue.strategyLabel} fundName={issue.fundName} gradient={issue.gradient} vintageYear={issue.vintageYear} fundSize={issue.fundSize} />
+        {issue.insightImageUrl ? (
+          <div className="relative w-full rounded-[8px] overflow-hidden" style={{ background: issue.gradient }}>
+            <img src={issue.insightImageUrl} alt={issue.insightImageSource || "Market chart"} className="w-full object-contain" style={{ maxHeight: 420, background: "#fff" }} />
+            <div className="absolute inset-x-0 bottom-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)", height: "50%" }} />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-[10px] font-bold tracking-[0.12em] uppercase px-2.5 py-1 rounded-[3px]" style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)" }}>
+                  {issue.strategyLabel}
+                </span>
+                {issue.vintageYear && <span className="text-[10px] font-semibold tracking-[0.08em] uppercase" style={{ color: "rgba(255,255,255,0.5)" }}>{issue.vintageYear} Vintage</span>}
+                {issue.fundSize && <span className="text-[10px] font-semibold tracking-[0.08em] uppercase" style={{ color: "rgba(255,255,255,0.5)" }}>{issue.fundSize}</span>}
+              </div>
+              <h2 className="text-[24px] md:text-[32px] font-bold tracking-[-0.02em] leading-[1.1]" style={{ fontFamily: "var(--font-playfair), Georgia, serif", color: "#fff" }}>
+                {issue.fundName}
+              </h2>
+              {issue.insightImageSource && <p className="text-[10px] mt-2" style={{ color: "rgba(255,255,255,0.4)" }}>Source: {issue.insightImageSource}</p>}
+            </div>
+          </div>
+        ) : (
+          <FundHeroImage strategy={issue.strategyLabel} fundName={issue.fundName} gradient={issue.gradient} vintageYear={issue.vintageYear} fundSize={issue.fundSize} />
+        )}
       </div>
 
       <article className="max-w-[900px] mx-auto px-6">
@@ -250,9 +270,17 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
           </div>
         </div>
 
-        {/* ══════ BULL & BEAR ══════ */}
+        {/* ══════ ARTICLE BODY (Story → Market Insight → Bull/Bear → Market Context → At a Glance → Bottom Line) ══════ */}
+        {issue.bodyHtml && (
+          <div className="max-w-[640px] mx-auto mb-12"
+            style={{ color: C.body, fontSize: "17px", lineHeight: "1.8", letterSpacing: "-0.003em" }}
+            dangerouslySetInnerHTML={{ __html: issue.bodyHtml }}
+          />
+        )}
+
+        {/* ══════ BULL & BEAR (after article body) ══════ */}
         {(bull || bear) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
             {bull && (
               <div className="rounded-[8px] p-6" style={{ background: "#E8F5EE", border: "1px solid #C6E7D4" }}>
                 <div className="flex items-center gap-2 mb-3">
@@ -272,14 +300,6 @@ export function IssueClient({ issue }: { issue: FeaturedIssue }) {
               </div>
             )}
           </div>
-        )}
-
-        {/* ══════ ARTICLE BODY (Story → Market Context → At a Glance → Market Insight → Bottom Line) ══════ */}
-        {issue.bodyHtml && (
-          <div className="max-w-[640px] mx-auto mb-16"
-            style={{ color: C.body, fontSize: "17px", lineHeight: "1.8", letterSpacing: "-0.003em" }}
-            dangerouslySetInnerHTML={{ __html: issue.bodyHtml }}
-          />
         )}
 
         {/* ══════ SUBMIT CTA ══��═══ */}

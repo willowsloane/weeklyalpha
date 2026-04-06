@@ -92,6 +92,8 @@ export interface FeaturedIssue {
   dataAsOf: string | null;
   bullCase: string | null;
   bearCase: string | null;
+  insightImageUrl: string | null;
+  insightImageSource: string | null;
 }
 
 export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
@@ -204,6 +206,8 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
         dataAsOf: fund.data_as_of ?? null,
         bullCase: content.bullCase || null,
         bearCase: content.bearCase || null,
+        insightImageUrl: content.insightImageUrl || null,
+        insightImageSource: content.insightImageSource || null,
       } as FeaturedIssue;
     })
     .filter(Boolean) as FeaturedIssue[];
