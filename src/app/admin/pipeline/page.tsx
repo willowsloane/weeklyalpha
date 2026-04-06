@@ -173,6 +173,7 @@ export default function PipelineDashboard() {
             <span className="text-[14px] font-semibold" style={{ color: "#fff" }}>Weekly Alpha Admin</span>
             <a href="/admin/docs" className="text-[13px]" style={{ color: "rgba(255,255,255,0.6)" }}>Docs</a>
             <a href="/admin/pipeline" className="text-[13px] font-semibold" style={{ color: "#fff" }}>Pipeline</a>
+            <a href="/admin/agent" className="text-[13px]" style={{ color: "rgba(255,255,255,0.6)" }}>Agent</a>
           </div>
           <a href="/" className="text-[13px]" style={{ color: "rgba(255,255,255,0.7)" }}>&larr; Back to site</a>
         </div>
