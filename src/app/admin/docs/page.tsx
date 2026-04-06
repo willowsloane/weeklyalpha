@@ -566,7 +566,7 @@ Range: 0.0 — 10.0 per dimension`}</CodeBlock>
             <SectionLabel>Conversational Agent</SectionLabel>
             <SectionTitle>The Slack employee</SectionTitle>
             <p className="text-[15px] leading-[1.6] max-w-[640px] mb-8" style={{ color: "var(--text-secondary)" }}>
-              A Gemini 2.0 Flash-powered conversational agent that lives in #alt-weekly. It manages the pipeline, answers questions, takes actions, and learns from feedback. It has 14 tools and persistent memory.
+              A Gemini 2.0 Flash-powered AI employee in #alt-weekly. Understands natural language (slang, typos, anything), decides what tools to call, queries the database, takes actions, and responds conversationally. Has persistent memory that grows with each pipeline run.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -620,6 +620,80 @@ Range: 0.0 — 10.0 per dimension`}</CodeBlock>
                     </li>
                   ))}
                 </ul>
+              </Card>
+            </div>
+
+            {/* How it works */}
+            <Card className="mb-6">
+              <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>How It Works</p>
+              <CodeBlock>{`WHEN YOU @MENTION IT:
+1. Slack sends event → events route detects #alt-weekly → routes to newsletter agent
+2. Agent loads context: last 15 channel messages + thread history
+3. Message + context → Gemini 2.0 Flash with 14 tool definitions
+4. Gemini decides what tools to call (up to 5 rounds of tool calls)
+5. Each tool queries Supabase → returns data → Gemini reasons about it
+6. Gemini composes natural language response → posted to Slack thread
+7. Everything logged to newsletter_agent_logs
+
+WHEN THE PIPELINE RUNS (WEDNESDAY CRON):
+1. Supervisor reads #alt-weekly → Gemini summarizes team direction
+2. Reads feedback + checks system health → posts opening Slack message
+3. Runs 6 agents: Research → Curator → Enrichment → Content Gen → Quality Review → Cross-Reference
+4. Each step posts threaded update to Slack
+5. Curator: reads memory + feedback → Gemini produces scoring adjustments → applies penalties/boosts
+6. Quality review: data sanity → fact-check → anti-vibe → tone (retry up to 2x)
+7. Done → "Ready for review" with preview link
+8. Monday 8AM: auto-publishes if review passed, blocks if not
+9. Approved → sends via Resend to subscribers`}</CodeBlock>
+            </Card>
+
+            {/* Slack→Pipeline Bridge */}
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>Slack → Pipeline Bridge</p>
+                <p className="text-[13px] leading-[1.6] mb-3" style={{ color: "var(--text-body)" }}>
+                  Team discussions in #alt-weekly directly influence the automated pipeline. Before each Wednesday cron run, the supervisor reads recent Slack messages and summarizes team direction via Gemini.
+                </p>
+                <p className="text-[13px] leading-[1.6]" style={{ color: "var(--text-body)" }}>
+                  If Milun says &ldquo;let&rsquo;s do more credit funds&rdquo; in Slack, the next run&rsquo;s curator and content-gen both receive that direction and act on it — no manual configuration needed.
+                </p>
+              </Card>
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>Fund Audit Tool</p>
+                <p className="text-[13px] leading-[1.6] mb-3" style={{ color: "var(--text-body)" }}>
+                  The <span style={{ fontFamily: MONO }}>audit_fund</span> tool runs a senior-level audit on any fund in the database:
+                </p>
+                <ul className="space-y-1.5">
+                  {[
+                    "Pulls fund data from Supabase",
+                    "Researches GP + fund via SearchAPI Google AI Mode (2 queries)",
+                    "Cross-references claims against Gemini's knowledge",
+                    "Checks for hallucinations and data discrepancies",
+                    "Assesses GP reputation, market context, red flags",
+                    "Produces 1-10 data reliability score with reasoning",
+                  ].map((item) => (
+                    <li key={item} className="text-[12px] flex items-start gap-2" style={{ color: "var(--text-body)" }}>
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--green)" }} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </div>
+
+            {/* Daily Report + Auto-Publish */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>Daily Report (9 AM UTC)</p>
+                <p className="text-[13px] leading-[1.6]" style={{ color: "var(--text-body)" }}>
+                  Every day the agent posts a summary to #alt-weekly: pipeline activity in last 24h, new feedback (thumbs up/down + reasons), system health flags (failure rates, quality scores), new agent learnings, and next scheduled run. Also stored in agent logs for the admin dashboard.
+                </p>
+              </Card>
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>Email Sending (Resend)</p>
+                <p className="text-[13px] leading-[1.6]" style={{ color: "var(--text-body)" }}>
+                  Approved newsletters are sent via Resend to all active subscribers. Every 15 minutes, a cron checks for approved-but-unsent runs and triggers the send task. Emails include thumbs up/down links for reader feedback and an unsubscribe link.
+                </p>
               </Card>
             </div>
           </div>
