@@ -227,17 +227,17 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
                 </p>
                 <div className="space-y-5">
                   {[
-                    { label: "This Fund", pct: featured.irrPercentile ?? 82, active: true },
+                    { label: "This Fund", pct: featured.irrPercentile ?? null, active: true },
                     { label: "Top Quartile", pct: 75, active: false },
                     { label: "Median", pct: 50, active: false },
                     { label: "Bottom Quartile", pct: 25, active: false },
-                  ].map((bar, i) => {
+                  ].filter(bar => bar.pct != null).map((bar, i) => {
                     const ord = (n: number) => { const s = ["th","st","nd","rd"]; const v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]); };
                     return (
                     <div key={bar.label} className="flex items-center gap-5">
                       <span className="text-[13px] font-medium w-32 shrink-0" style={{ color: bar.active ? "var(--text-primary)" : "var(--text-muted)" }}>{bar.label}</span>
-                      <BarAnimation width={bar.pct} active={bar.active} delay={i * 0.1} />
-                      <span className="text-[13px] font-bold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: MONO }}>{ord(bar.pct)}</span>
+                      <BarAnimation width={bar.pct!} active={bar.active} delay={i * 0.1} />
+                      <span className="text-[13px] font-bold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: MONO }}>{ord(bar.pct!)}</span>
                     </div>
                     );
                   })}
