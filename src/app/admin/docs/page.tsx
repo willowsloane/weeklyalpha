@@ -75,7 +75,12 @@ export default function AdminDocsPage() {
       {/* Top bar */}
       <div className="py-3" style={{ background: "var(--green-deep)" }}>
         <div className="max-w-[1280px] mx-auto px-6 lg:px-10 flex items-center justify-between">
-          <span className="text-[14px] font-semibold" style={{ color: "#fff" }}>Weekly Alpha Admin</span>
+          <div className="flex items-center gap-6">
+            <span className="text-[14px] font-semibold" style={{ color: "#fff" }}>Weekly Alpha Admin</span>
+            <a href="/admin/docs" className="text-[13px] font-semibold" style={{ color: "#fff" }}>Docs</a>
+            <a href="/admin/pipeline" className="text-[13px]" style={{ color: "rgba(255,255,255,0.6)" }}>Pipeline</a>
+            <a href="/admin/agent" className="text-[13px]" style={{ color: "rgba(255,255,255,0.6)" }}>Agent</a>
+          </div>
           <a href="/" className="text-[13px]" style={{ color: "rgba(255,255,255,0.7)" }}>&larr; Back to site</a>
         </div>
       </div>
@@ -555,10 +560,159 @@ Range: 0.0 — 10.0 per dimension`}</CodeBlock>
           </div>
         </FadeUp>
 
+        {/* ── Slack Agent ──────────────────────────────────────── */}
+        <FadeUp>
+          <div className="mb-20">
+            <SectionLabel>Conversational Agent</SectionLabel>
+            <SectionTitle>The Slack employee</SectionTitle>
+            <p className="text-[15px] leading-[1.6] max-w-[640px] mb-8" style={{ color: "var(--text-secondary)" }}>
+              A Gemini 2.0 Flash-powered conversational agent that lives in #alt-weekly. It manages the pipeline, answers questions, takes actions, and learns from feedback. It has 14 tools and persistent memory.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>14 Tools</p>
+                <ul className="space-y-1.5">
+                  {[
+                    "get_pipeline_status — current/recent runs",
+                    "get_fund_pool — fund count, strategy breakdown, top performers",
+                    "get_feedback — reader thumbs up/down, reasons",
+                    "get_candidates — scored candidates from a run",
+                    "get_featured_history — previously featured funds",
+                    "get_newsletter_content — draft content preview",
+                    "get_schedule — cron status, next dates",
+                    "get_agent_memory — past decisions, learnings, team direction",
+                    "analyze_system_health — quality trends, error patterns, flags",
+                    "search_channel_history — search team discussions",
+                    "audit_fund — deep fund audit with SearchAPI + Gemini verification",
+                    "approve_newsletter — approve pending (requires verified user)",
+                    "skip_newsletter — cancel this week",
+                    "trigger_pipeline — start a new run",
+                  ].map((t) => (
+                    <li key={t} className="text-[13px] flex items-start gap-2" style={{ color: "var(--text-body)" }}>
+                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--green-deep)" }} />
+                      <span style={{ fontFamily: MONO }}>{t.split(" — ")[0]}</span>
+                      <span style={{ color: "var(--text-muted)" }}> — {t.split(" — ")[1]}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+
+              <Card>
+                <p className="text-[14px] font-bold mb-4" style={{ color: "var(--green-deep)" }}>Context Awareness</p>
+                <ul className="space-y-3">
+                  {[
+                    { label: "Channel context", desc: "Reads last 15 #alt-weekly messages as background awareness on every interaction" },
+                    { label: "Thread context", desc: "Reads last 20 messages in the current thread for conversation continuity" },
+                    { label: "On-demand search", desc: "Can search deeper into channel history when it needs more context" },
+                    { label: "User identity", desc: "Resolves Slack user IDs to names — knows who it's talking to" },
+                    { label: "Persistent memory", desc: "Stores decisions, learnings, and team direction across runs. Reads them back before each selection" },
+                  ].map((r) => (
+                    <li key={r.label} className="flex items-start gap-3">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 shrink-0">
+                        <circle cx="8" cy="8" r="8" fill="var(--green-pale)" />
+                        <path d="M5 8L7 10L11 6" stroke="var(--green-deep)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <div>
+                        <span className="text-[13px] font-semibold" style={{ color: "var(--text-primary)" }}>{r.label}</span>
+                        <p className="text-[12px]" style={{ color: "var(--text-muted)" }}>{r.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* ── Self-Improving Feedback Loop ───────────────────────── */}
+        <FadeUp>
+          <div className="mb-20">
+            <SectionLabel>Feedback Loop</SectionLabel>
+            <SectionTitle>Self-improving selection</SectionTitle>
+            <p className="text-[15px] leading-[1.6] max-w-[640px] mb-8" style={{ color: "var(--text-secondary)" }}>
+              The system learns from every newsletter sent. Reader feedback directly changes fund scoring — not just as context, but as concrete numerical adjustments.
+            </p>
+
+            <Card className="mb-6">
+              <CodeBlock>{`FEEDBACK FLOW:
+1. Newsletter sent → readers click thumbs up/down in email
+2. Thumbs down → "What didn't you like?" page → reasons stored
+3. Slack emoji reactions on pipeline messages → also stored
+4. Next pipeline run:
+   a. Curator reads all recent feedback
+   b. Gemini analyzes feedback themes + team Slack direction + past memory
+   c. Produces structured JSON: { penalize: [{strategy, amount, reason}], boost: [...] }
+   d. Adjustments applied as concrete score changes (not just context)
+   e. Decision + adjustments written to agent memory for future runs
+5. Agent reports feedback summary in opening Slack message`}</CodeBlock>
+            </Card>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                { name: "newsletter_feedback", desc: "Stores every thumbs up/down, reason, source (email/slack/web), subscriber email" },
+                { name: "newsletter_agent_memory", desc: "Persistent memory: decisions, learnings, team direction. Read before each run." },
+                { name: "newsletter_agent_logs", desc: "Activity log: every tool call, conversation, error with timestamps and duration" },
+              ].map((t) => (
+                <Card key={t.name}>
+                  <p className="text-[14px] font-bold mb-2" style={{ color: "var(--text-primary)", fontFamily: MONO }}>{t.name}</p>
+                  <p className="text-[13px] leading-[1.5]" style={{ color: "var(--text-secondary)" }}>{t.desc}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* ── Glossary ──────────────────────────────────────────── */}
+        <FadeUp>
+          <div className="mb-20">
+            <SectionLabel>Reference</SectionLabel>
+            <SectionTitle>Glossary</SectionTitle>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-[14px]" style={{ borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "2px solid var(--border)" }}>
+                    <th className="text-left py-3 pr-4 font-semibold" style={{ color: "var(--text-primary)" }}>Term</th>
+                    <th className="text-left py-3 px-4 font-semibold" style={{ color: "var(--text-primary)" }}>Definition</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { term: "IRS", def: "Institutional Relevance Score. 5-dimension weighted score (0-10) that determines which fund to feature each week." },
+                    { term: "IRR", def: "Internal Rate of Return. The annualized return of a fund, net of fees. The #1 metric LPs care about." },
+                    { term: "TVPI", def: "Total Value to Paid-In. (Distributions + NAV) / Capital Called. Shows total value created per dollar invested." },
+                    { term: "DPI", def: "Distributions to Paid-In. Cash returned / Capital Called. Shows actual cash back to investors." },
+                    { term: "MOIC", def: "Multiple on Invested Capital. Total value / total invested. Similar to TVPI but sometimes includes recycled capital." },
+                    { term: "GP", def: "General Partner. The fund manager who makes investment decisions and charges fees." },
+                    { term: "LP", def: "Limited Partner. The investor who commits capital to the fund (pensions, endowments, family offices)." },
+                    { term: "Vintage Year", def: "The year a fund started investing. Used to compare funds against their peer cohort." },
+                    { term: "Mgmt Fee", def: "Annual management fee charged by the GP, typically 1.5-2.0% of committed capital." },
+                    { term: "Carry", def: "Carried interest. The GP's share of profits, typically 20% above a hurdle rate." },
+                    { term: "Hurdle Rate", def: "Minimum return the fund must achieve before the GP earns carry. Typically 8%." },
+                    { term: "Decay Penalty", def: "Score reduction (-2.0) applied when the same strategy was featured in the last 4 weeks. Forces diversity." },
+                    { term: "Feedback Adjustment", def: "Score change applied by Gemini based on reader feedback. Penalizes disliked strategies, boosts preferred ones." },
+                    { term: "Anti-Vibe", def: "Quality gate that rejects marketing language, banned words, and missing bear cases. Score >= 90 to pass." },
+                    { term: "SearchAPI AI Mode", def: "Google AI Mode via SearchAPI.io. Reads full web pages and returns synthesized answers. Used for market intelligence and fund audits." },
+                    { term: "Pipeline Run", def: "One execution of the full newsletter pipeline (research → curate → enrich → generate → review). One per week." },
+                    { term: "Agent Memory", def: "Persistent storage of decisions, learnings, and team direction. The agent reads this before each run to improve over time." },
+                    { term: "Trigger.dev", def: "Serverless task orchestration platform. Runs all pipeline agents with retries, timeouts, and scheduling." },
+                  ].map((row) => (
+                    <tr key={row.term} style={{ borderBottom: "1px solid var(--border-light)" }}>
+                      <td className="py-3 pr-4 font-semibold" style={{ color: "var(--text-primary)", fontFamily: MONO }}>{row.term}</td>
+                      <td className="py-3 px-4" style={{ color: "var(--text-secondary)" }}>{row.def}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </FadeUp>
+
         {/* Footer */}
         <div className="pt-10" style={{ borderTop: "1px solid var(--border-light)" }}>
           <p className="text-[13px]" style={{ color: "var(--text-muted)" }}>
-            Weekly Alpha Newsletter Pipeline v1.0 &middot; Built with Trigger.dev, Supabase, Gemini Flash, Claude Sonnet
+            Weekly Alpha Newsletter Pipeline v2.0 &middot; Built with Trigger.dev, Supabase, Gemini Flash, SearchAPI, Slack Bot API
           </p>
         </div>
       </div>
