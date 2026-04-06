@@ -223,21 +223,24 @@ export function HomeClient({ featured, pastIssues, isLive }: { featured: Feature
             <div className="max-w-[800px] mx-auto rounded-[10px] overflow-hidden" style={{ background: "var(--off-white)", border: "1px solid var(--border)" }}>
               <div className="px-8 md:px-10 py-8">
                 <p className="text-[11px] font-semibold tracking-[0.12em] uppercase mb-7" style={{ color: "var(--text-muted)" }}>
-                  Peer Benchmark — {featured.strategyLabel}, {featured.vintageYear || 2022} Vintage
+                  Peer Benchmark — {featured.strategyLabel}{featured.vintageYear ? `, ${featured.vintageYear} Vintage` : ""}
                 </p>
                 <div className="space-y-5">
                   {[
-                    { label: "This Fund", pct: 82, active: true },
+                    { label: "This Fund", pct: featured.irrPercentile ?? 82, active: true },
                     { label: "Top Quartile", pct: 75, active: false },
                     { label: "Median", pct: 50, active: false },
                     { label: "Bottom Quartile", pct: 25, active: false },
-                  ].map((bar, i) => (
+                  ].map((bar, i) => {
+                    const ord = (n: number) => { const s = ["th","st","nd","rd"]; const v = n % 100; return n + (s[(v-20)%10] || s[v] || s[0]); };
+                    return (
                     <div key={bar.label} className="flex items-center gap-5">
                       <span className="text-[13px] font-medium w-32 shrink-0" style={{ color: bar.active ? "var(--text-primary)" : "var(--text-muted)" }}>{bar.label}</span>
                       <BarAnimation width={bar.pct} active={bar.active} delay={i * 0.1} />
-                      <span className="text-[13px] font-bold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: MONO }}>{bar.pct}th</span>
+                      <span className="text-[13px] font-bold w-12 text-right" style={{ color: bar.active ? "var(--green-deep)" : "var(--text-muted)", fontFamily: MONO }}>{ord(bar.pct)}</span>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               <div className="mx-8 md:mx-10" style={{ height: "1px", background: "var(--border)" }} />
