@@ -166,7 +166,7 @@ export async function getFeaturedIssues(limit = 10): Promise<FeaturedIssue[]> {
       return {
         id: fund.id,
         pipelineRunId: run.id,
-        weekOf: run.week_of,
+        weekOf: content?.displayWeekOf || run.week_of,
         fundName: fund.fund_name || "Unknown Fund",
         gpName: fund.gp_name || "",
         strategy: fund.strategy || "alternative",
